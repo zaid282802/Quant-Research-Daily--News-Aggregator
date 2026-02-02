@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quant Research Daily | Financial Markets Intelligence</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1 class="logo">QRD</h1>
+                    <span class="logo-text">Quant Research Daily</span>
+                </div>
+                <div class="header-actions">
+                    <span class="last-updated" id="lastUpdated">Last updated: --</span>
+                    <button class="btn btn-refresh" id="refreshBtn" onclick="fetchAllNews()">
+                        <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                    <a href="dashboard.html" class="btn" style="background: var(--accent-purple); border-color: var(--accent-purple);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18M9 17V9m4 8V5m4 12v-6"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="archive.html" class="btn btn-archive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
+                        </svg>
+                        Archive
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Market Overview Bar -->
+        <div class="market-bar">
+            <div class="market-bar-content" id="marketBar">
+                <div class="market-item loading">
+                    <span class="market-label">Loading market data...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="category-nav">
+            <button class="category-tab active" data-category="all">All News</button>
+            <button class="category-tab" data-category="volatility">Volatility & Derivatives</button>
+            <button class="category-tab" data-category="central-banks">Central Banks</button>
+            <button class="category-tab" data-category="systematic">Systematic Trading</button>
+            <button class="category-tab" data-category="factors">Factor Investing</button>
+            <button class="category-tab" data-category="fixed-income">Fixed Income</button>
+            <button class="category-tab" data-category="macro">Macro & Data</button>
+            <button class="category-tab" data-category="commodities">Commodities & FX</button>
+        </nav>
+
+        <!-- Hero Breaking News Section -->
+        <section class="hero-news-section" id="heroNews">
+            <div class="hero-container">
+                <div class="hero-badge">
+                    <span class="pulse-dot"></span>
+                    BREAKING
+                </div>
+                <div class="hero-content" id="heroContent">
+                    <div class="hero-loading">
+                        <span>Loading breaking news...</span>
+                    </div>
+                </div>
+                <div class="hero-navigation">
+                    <button class="hero-nav-btn" onclick="prevHeroNews()" aria-label="Previous news">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <div class="hero-dots" id="heroDots"></div>
+                    <button class="hero-nav-btn" onclick="nextHeroNews()" aria-label="Next news">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Priority News Section -->
+            <section class="news-section priority-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="priority-badge">HIGH PRIORITY</span>
+                        Critical Market Updates
+                    </h2>
+                </div>
+                <div class="news-grid priority-grid" id="priorityNews">
+                    <div class="loading-placeholder">
+                        <div class="loading-spinner"></div>
+                        <p>Fetching priority news...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main News Feed -->
+            <section class="news-section">
+                <div class="section-header">
+                    <h2 class="section-title">Latest News</h2>
+                    <div class="section-filters">
+                        <select id="sourceFilter" class="filter-select">
+                            <option value="all">All Sources</option>
+                            <option value="wsj">WSJ</option>
+                            <option value="ft">Financial Times</option>
+                            <option value="bloomberg">Bloomberg</option>
+                            <option value="reuters">Reuters</option>
+                            <option value="fed">Federal Reserve</option>
+                            <option value="ecb">ECB</option>
+                            <option value="alpha architect">Alpha Architect</option>
+                            <option value="quantocracy">Quantocracy</option>
+                            <option value="cnbc">CNBC</option>
+                            <option value="marketwatch">MarketWatch</option>
+                        </select>
+                        <select id="timeFilter" class="filter-select">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="news-grid" id="mainNews">
+                    <div class="loading-placeholder">
+                        <div class="loading-spinner"></div>
+                        <p>Loading news feed...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Research & Analysis -->
+            <section class="news-section research-section">
+                <div class="section-header">
+                    <h2 class="section-title">Research & Analysis</h2>
+                </div>
+                <div class="research-grid" id="researchNews">
+                    <div class="loading-placeholder">
+                        <div class="loading-spinner"></div>
+                        <p>Loading research articles...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Economic Calendar -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Economic Calendar</h3>
+                <div class="calendar-events" id="economicCalendar">
+                    <div class="loading-placeholder small">
+                        <div class="loading-spinner small"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIX & Volatility Widget -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Volatility Monitor</h3>
+                <div class="volatility-widget" id="volatilityWidget">
+                    <div class="loading-placeholder small">
+                        <div class="loading-spinner small"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Central Bank Watch -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Central Bank Watch</h3>
+                <div class="central-bank-widget" id="centralBankWidget">
+                    <div class="loading-placeholder small">
+                        <div class="loading-spinner small"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Research Ideas Widget -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">💡 Research Ideas</h3>
+                <div class="research-ideas-widget" id="researchIdeasWidget">
+                    <div class="empty-ideas">
+                        <p>Click 💡 on any news card to save research ideas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Quick Links</h3>
+                <div class="quick-links">
+                    <a href="https://fred.stlouisfed.org/" target="_blank" class="quick-link">📊 FRED Data</a>
+                    <a href="https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html" target="_blank" class="quick-link">📈 CME FedWatch</a>
+                    <a href="https://www.cboe.com/tradable_products/vix/" target="_blank" class="quick-link">📉 CBOE VIX</a>
+                    <a href="https://alphaarchitect.com/blog/" target="_blank" class="quick-link">🔬 Alpha Architect</a>
+                    <a href="https://www.aqr.com/Insights/Research" target="_blank" class="quick-link">📚 AQR Research</a>
+                    <a href="https://papers.ssrn.com/sol3/JELJOUR_Results.cfm?form_name=journalbrowse&journal_id=1927431" target="_blank" class="quick-link">📝 SSRN Finance</a>
+                    <a href="https://quantocracy.com/" target="_blank" class="quick-link">🤖 Quantocracy</a>
+                    <a href="research-ideas.html" class="quick-link">💡 My Research Ideas</a>
+                    <a href="dashboard.html" class="quick-link" style="color: var(--accent-purple);">📊 Analytics Dashboard</a>
+                </div>
+            </div>
+
+            <!-- Factor Performance Widget -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">📈 Factor Performance (MTD)</h3>
+                <div id="factorWidget">
+                    <div class="loading-placeholder small">
+                        <div class="loading-spinner small"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Keyboard Shortcuts -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">⌨️ Shortcuts</h3>
+                <div class="shortcuts-list">
+                    <div class="shortcut-item"><kbd>R</kbd> Refresh news</div>
+                    <div class="shortcut-item"><kbd>1-8</kbd> Filter by category</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>Quant Research Daily - Curated financial news for quantitative researchers</p>
+                <p class="disclaimer">Data aggregated from public RSS feeds and APIs. Not financial advice.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-message"></span>
+    </div>
+
+    <!-- Hot News Floating Panel -->
+    <aside class="hot-news-panel" id="hotNewsPanel">
+        <div class="hot-news-header">
+            <h4>
+                <span class="hot-icon">&#128293;</span>
+                Critical Alerts
+            </h4>
+            <button class="hot-news-toggle" onclick="toggleHotNewsPanel()" aria-label="Minimize panel">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="hot-news-body" id="hotNewsBody">
+            <div class="hot-news-loading">Scanning for critical alerts...</div>
+        </div>
+        <div class="hot-news-footer">
+            <select id="hotNewsFilter" onchange="filterHotNews(this.value)">
+                <option value="all">All Categories</option>
+                <option value="volatility">Volatility</option>
+                <option value="central-banks">Central Banks</option>
+                <option value="macro">Macro</option>
+                <option value="markets">Markets</option>
+            </select>
+            <span class="hot-news-count" id="hotNewsCount">0 alerts</span>
+        </div>
+    </aside>
+
+    <!-- Core Scripts -->
+    <script src="storage.js"></script>
+    <script src="volatility.js"></script>
+    <script src="factors.js"></script>
+    <script src="app.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('SW registered:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('SW registration failed:', error);
+                    });
+            });
+        }
+
+        // Initialize enhanced features after main app loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize factor widget
+            setTimeout(() => {
+                if (typeof initFactorTracking === 'function') {
+                    initFactorTracking();
+                }
+            }, 2000);
+
+            // Initialize enhanced volatility tracking
+            setTimeout(() => {
+                if (typeof initVolatilityTracking === 'function') {
+                    initVolatilityTracking();
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

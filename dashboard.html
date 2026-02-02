@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard | Quant Research Daily</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* Dashboard-specific styles */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .dashboard-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .dashboard-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+        }
+
+        .dashboard-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .dashboard-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .dashboard-card-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* VIX Widget Styles */
+        .vol-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .vol-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vol-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            line-height: 1;
+        }
+
+        .vol-change {
+            font-size: 0.875rem;
+            font-family: var(--font-mono);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        .vol-change.positive {
+            background: rgba(248, 81, 73, 0.15);
+            color: var(--accent-red);
+        }
+
+        .vol-change.negative {
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--accent-green);
+        }
+
+        .vol-percentile {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin: var(--spacing-sm) 0;
+        }
+
+        .vol-bar {
+            height: 12px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            position: relative;
+            margin: var(--spacing-sm) 0;
+        }
+
+        .vol-bar-fill {
+            height: 100%;
+            border-radius: var(--radius-sm);
+            transition: width 0.5s ease;
+        }
+
+        .vol-bar-markers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+        }
+
+        .vol-bar-markers .marker {
+            position: absolute;
+            top: -18px;
+            transform: translateX(-50%);
+            font-size: 0.625rem;
+            color: var(--text-muted);
+        }
+
+        .vol-term-structure {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .term-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .term-badge {
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .term-badge.contango {
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--accent-green);
+        }
+
+        .term-badge.backwardation {
+            background: rgba(248, 81, 73, 0.15);
+            color: var(--accent-red);
+        }
+
+        .term-badge.flat {
+            background: rgba(139, 148, 158, 0.15);
+            color: var(--text-muted);
+        }
+
+        .term-chart-container {
+            display: flex;
+            gap: var(--spacing-sm);
+            height: 120px;
+            margin: var(--spacing-md) 0;
+        }
+
+        .term-chart-y-axis {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            padding-right: var(--spacing-sm);
+        }
+
+        .term-chart-bars {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: var(--spacing-xs);
+        }
+
+        .term-bar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            height: 100%;
+        }
+
+        .term-bar {
+            width: 100%;
+            max-width: 40px;
+            background: var(--accent-primary);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            transition: height 0.3s ease;
+        }
+
+        .term-bar.spot {
+            background: var(--accent-green);
+        }
+
+        .term-bar-value {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: white;
+            padding-top: 4px;
+        }
+
+        .term-bar-label {
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            margin-top: var(--spacing-xs);
+            white-space: nowrap;
+        }
+
+        .term-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .term-metric {
+            background: var(--bg-tertiary);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-sm);
+        }
+
+        .metric-label {
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .metric-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        .metric-value.positive { color: var(--accent-green); }
+        .metric-value.negative { color: var(--accent-red); }
+
+        .vol-regime {
+            margin-top: var(--spacing-md);
+        }
+
+        .regime-badge {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            border: 1px solid;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .regime-implication {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: var(--spacing-sm);
+            text-align: center;
+        }
+
+        /* Factor Dashboard Styles */
+        .factor-dashboard {
+            overflow-x: auto;
+        }
+
+        .factor-header {
+            display: grid;
+            grid-template-columns: 200px 1fr 50px;
+            gap: var(--spacing-md);
+            padding: var(--spacing-sm) 0;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .factor-header-periods {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            text-align: right;
+        }
+
+        .factor-body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .factor-row {
+            display: grid;
+            grid-template-columns: 200px 1fr 50px;
+            gap: var(--spacing-md);
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--border-light);
+            align-items: center;
+        }
+
+        .factor-row:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .factor-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .factor-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .factor-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .factor-description {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+
+        .factor-returns {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: var(--spacing-xs);
+        }
+
+        .return-cell {
+            text-align: right;
+            font-size: 0.8125rem;
+            font-family: var(--font-mono);
+            padding: 2px 4px;
+            border-radius: var(--radius-sm);
+        }
+
+        .return-cell.positive {
+            color: var(--accent-green);
+            background: rgba(63, 185, 80, 0.1);
+        }
+
+        .return-cell.negative {
+            color: var(--accent-red);
+            background: rgba(248, 81, 73, 0.1);
+        }
+
+        .factor-trend {
+            text-align: center;
+            font-size: 1.25rem;
+        }
+
+        .factor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--spacing-md);
+            margin-top: var(--spacing-md);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .factor-note {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+
+        .factor-links {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .factor-links a {
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        .factor-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Chart Styles */
+        .chart-container {
+            width: 100%;
+            min-height: 300px;
+        }
+
+        .chart-tooltip {
+            position: absolute;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm);
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tooltip-date {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .tooltip-row {
+            font-family: var(--font-mono);
+        }
+
+        /* TradingView Widget */
+        .tradingview-widget {
+            height: 400px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        /* Factor Widget Compact */
+        .factor-widget-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-xs) 0;
+        }
+
+        .factor-widget-name {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.8125rem;
+        }
+
+        .factor-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .factor-widget-return {
+            font-size: 0.8125rem;
+            font-family: var(--font-mono);
+            font-weight: 600;
+        }
+
+        .factor-widget-link {
+            display: block;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            margin-top: var(--spacing-sm);
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* Correlation Heatmap */
+        .heatmap-container {
+            display: flex;
+            justify-content: center;
+            padding: var(--spacing-md);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .factor-header,
+            .factor-row {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+
+            .factor-header-periods,
+            .factor-returns {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="display: block;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                        <h1 class="logo">QRD</h1>
+                        <span class="logo-text">Quant Research Daily</span>
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <span class="last-updated" id="lastUpdated">Last updated: --</span>
+                    <button class="btn btn-refresh" id="refreshBtn" onclick="refreshDashboard()">
+                        <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                    <a href="index.html" class="btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        News Feed
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h2 class="dashboard-title">📊 Analytics Dashboard</h2>
+                <div class="dashboard-controls">
+                    <select class="filter-select" id="periodFilter" onchange="updatePeriod(this.value)">
+                        <option value="1D">1 Day</option>
+                        <option value="1W">1 Week</option>
+                        <option value="1M" selected>1 Month</option>
+                        <option value="3M">3 Months</option>
+                        <option value="YTD">YTD</option>
+                        <option value="1Y">1 Year</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Top Row: VIX and TradingView -->
+            <div class="dashboard-grid">
+                <!-- VIX Term Structure Widget -->
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <div>
+                            <div class="dashboard-card-title">📉 Volatility Surface</div>
+                            <div class="dashboard-card-subtitle">VIX Term Structure & Regime</div>
+                        </div>
+                    </div>
+                    <div id="volatilityWidget">
+                        <div class="loading-placeholder">
+                            <div class="loading-spinner"></div>
+                            <p>Loading volatility data...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TradingView Chart -->
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <div>
+                            <div class="dashboard-card-title">📈 Market Overview</div>
+                            <div class="dashboard-card-subtitle">S&P 500 with VIX Overlay</div>
+                        </div>
+                    </div>
+                    <div class="tradingview-widget" id="tradingviewWidget">
+                        <!-- TradingView Widget -->
+                        <div class="tradingview-widget-container">
+                            <div id="tradingview_chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Factor Performance -->
+            <div class="dashboard-card" style="margin-bottom: var(--spacing-xl);">
+                <div class="dashboard-card-header">
+                    <div>
+                        <div class="dashboard-card-title">📊 Factor Performance Dashboard</div>
+                        <div class="dashboard-card-subtitle">Fama-French Factors via ETF Proxies</div>
+                    </div>
+                </div>
+                <div id="factorDashboard">
+                    <div class="loading-placeholder">
+                        <div class="loading-spinner"></div>
+                        <p>Loading factor data...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="dashboard-grid">
+                <!-- Factor Bar Chart -->
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <div>
+                            <div class="dashboard-card-title">Factor Returns Comparison</div>
+                            <div class="dashboard-card-subtitle" id="barChartPeriod">1 Month Returns</div>
+                        </div>
+                    </div>
+                    <div class="chart-container" id="factorBarChart"></div>
+                </div>
+
+                <!-- Factor Correlation Heatmap -->
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <div>
+                            <div class="dashboard-card-title">Factor Correlations</div>
+                            <div class="dashboard-card-subtitle">Historical Correlations (Typical)</div>
+                        </div>
+                    </div>
+                    <div class="heatmap-container" id="correlationHeatmap"></div>
+                </div>
+            </div>
+
+            <!-- VIX Term Structure Chart -->
+            <div class="dashboard-card" style="margin-top: var(--spacing-xl);">
+                <div class="dashboard-card-header">
+                    <div>
+                        <div class="dashboard-card-title">VIX Futures Term Structure</div>
+                        <div class="dashboard-card-subtitle">Spot vs Futures Curve</div>
+                    </div>
+                </div>
+                <div class="chart-container" id="vixTermChart" style="height: 250px;"></div>
+            </div>
+
+            <!-- Additional TradingView Widgets -->
+            <div class="dashboard-grid" style="margin-top: var(--spacing-xl);">
+                <!-- Market Heatmap -->
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <div>
+                            <div class="dashboard-card-title">Sector Heatmap</div>
+                            <div class="dashboard-card-subtitle">S&P 500 Sectors</div>
+                        </div>
+                    </div>
+                    <div id="sectorHeatmap" style="height: 300px;"></div>
+                </div>
+
+                <!-- Economic Calendar -->
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <div>
+                            <div class="dashboard-card-title">Economic Calendar</div>
+                            <div class="dashboard-card-subtitle">Upcoming Events</div>
+                        </div>
+                    </div>
+                    <div id="economicCalendarWidget" style="height: 300px;"></div>
+                </div>
+            </div>
+
+            <!-- Storage Stats -->
+            <div class="dashboard-card" style="margin-top: var(--spacing-xl);">
+                <div class="dashboard-card-header">
+                    <div>
+                        <div class="dashboard-card-title">💾 Storage Statistics</div>
+                        <div class="dashboard-card-subtitle">IndexedDB Usage</div>
+                    </div>
+                </div>
+                <div id="storageStats">
+                    <p class="loading-text">Loading storage stats...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-message"></span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="storage.js"></script>
+    <script src="volatility.js"></script>
+    <script src="factors.js"></script>
+    <script src="charts.js"></script>
+
+    <!-- TradingView Widget Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
+    <script>
+        // Dashboard state
+        let currentPeriod = '1M';
+        let factorData = null;
+        let volData = null;
+
+        // Initialize dashboard
+        async function initDashboard() {
+            console.log('Initializing dashboard...');
+
+            // Load volatility data
+            initVolatilityTracking().then(data => {
+                volData = data;
+                if (data && data.futures) {
+                    createVIXTermStructureChart('vixTermChart', data.futures);
+                }
+            });
+
+            // Load factor data
+            initFactorTracking().then(data => {
+                factorData = data;
+                if (data && data.factors) {
+                    renderFactorDashboard('factorDashboard', data.factors, data.stats);
+                    createFactorBarChart('factorBarChart', data.factors, currentPeriod);
+                }
+            });
+
+            // Create correlation heatmap
+            const correlations = generateSampleCorrelations();
+            createCorrelationHeatmap('correlationHeatmap', correlations);
+
+            // Initialize TradingView widgets
+            initTradingViewWidgets();
+
+            // Load storage stats
+            loadStorageStats();
+
+            // Update timestamp
+            document.getElementById('lastUpdated').textContent =
+                `Last updated: ${new Date().toLocaleString()}`;
+        }
+
+        // Initialize TradingView widgets
+        function initTradingViewWidgets() {
+            // Main chart
+            if (typeof TradingView !== 'undefined') {
+                new TradingView.widget({
+                    "autosize": true,
+                    "symbol": "SPY",
+                    "interval": "D",
+                    "timezone": "America/New_York",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "en",
+                    "toolbar_bg": "#0d1117",
+                    "enable_publishing": false,
+                    "hide_top_toolbar": false,
+                    "hide_legend": false,
+                    "save_image": false,
+                    "container_id": "tradingview_chart",
+                    "studies": [
+                        "MASimple@tv-basicstudies",
+                        "Volume@tv-basicstudies"
+                    ]
+                });
+
+                // Sector heatmap
+                new TradingView.widget({
+                    "colorTheme": "dark",
+                    "dateRange": "1D",
+                    "exchange": "US",
+                    "showChart": true,
+                    "locale": "en",
+                    "largeChartUrl": "",
+                    "isTransparent": true,
+                    "showSymbolLogo": false,
+                    "showFloatingTooltip": false,
+                    "width": "100%",
+                    "height": "100%",
+                    "plotLineColorGrowing": "rgba(63, 185, 80, 1)",
+                    "plotLineColorFalling": "rgba(248, 81, 73, 1)",
+                    "gridLineColor": "rgba(240, 243, 250, 0)",
+                    "scaleFontColor": "rgba(139, 148, 158, 1)",
+                    "belowLineFillColorGrowing": "rgba(63, 185, 80, 0.12)",
+                    "belowLineFillColorFalling": "rgba(248, 81, 73, 0.12)",
+                    "belowLineFillColorGrowingBottom": "rgba(63, 185, 80, 0)",
+                    "belowLineFillColorFallingBottom": "rgba(248, 81, 73, 0)",
+                    "symbolActiveColor": "rgba(88, 166, 255, 0.12)",
+                    "container_id": "sectorHeatmap"
+                });
+
+                // Economic calendar
+                new TradingView.widget({
+                    "colorTheme": "dark",
+                    "isTransparent": true,
+                    "width": "100%",
+                    "height": "100%",
+                    "locale": "en",
+                    "importanceFilter": "0,1",
+                    "container_id": "economicCalendarWidget"
+                });
+            }
+        }
+
+        // Refresh dashboard
+        async function refreshDashboard() {
+            const btn = document.getElementById('refreshBtn');
+            btn.classList.add('loading');
+
+            await initDashboard();
+
+            btn.classList.remove('loading');
+            showToast('Dashboard refreshed');
+        }
+
+        // Update period
+        function updatePeriod(period) {
+            currentPeriod = period;
+            document.getElementById('barChartPeriod').textContent =
+                period === '1D' ? '1 Day Returns' :
+                period === '1W' ? '1 Week Returns' :
+                period === '1M' ? '1 Month Returns' :
+                period === '3M' ? '3 Month Returns' :
+                period === 'YTD' ? 'Year-to-Date Returns' :
+                '1 Year Returns';
+
+            if (factorData && factorData.factors) {
+                createFactorBarChart('factorBarChart', factorData.factors, period);
+            }
+        }
+
+        // Load storage stats
+        async function loadStorageStats() {
+            try {
+                const stats = await getStorageStats();
+                const container = document.getElementById('storageStats');
+
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--spacing-md);">
+                        ${stats.caches ? stats.caches.map(cache => `
+                            <div class="stat-card" style="background: var(--bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-primary);">${cache.entries || 0}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">${cache.name}</div>
+                            </div>
+                        `).join('') : ''}
+                        ${stats.totalSize ? `
+                            <div class="stat-card" style="background: var(--bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-primary);">${(stats.totalSize / 1024 / 1024).toFixed(2)} MB</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Total Size</div>
+                            </div>
+                            <div class="stat-card" style="background: var(--bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-primary);">${stats.usagePercent}%</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Quota Used</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } catch (e) {
+                console.error('Failed to load storage stats:', e);
+            }
+        }
+
+        // Toast helper
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.querySelector('.toast-message').textContent = message;
+            toast.classList.toggle('error', isError);
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Storage helper (fallback)
+        function saveToStorage(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+                console.warn('Storage save failed:', e);
+            }
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>

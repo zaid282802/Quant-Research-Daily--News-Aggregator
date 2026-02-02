@@ -1,0 +1,40 @@
+# Claude Code folder
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-*
+
+# Node modules (if you add npm later)
+node_modules/
+package-lock.json
+
+# Python cache (if you run local server)
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment variables (if you add API keys later)
+.env
+.env.local
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Browser cache/storage (if any gets saved locally)
+*.cache
+cache/

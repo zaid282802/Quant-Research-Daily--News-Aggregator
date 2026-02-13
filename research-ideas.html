@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
     <meta name="author" content="Zaid Annigeri">
     <meta name="copyright" content="Copyright 2025-2026 Zaid Annigeri. All rights reserved.">
     <title>Research Ideas | Quant Research Daily</title>
@@ -885,9 +886,108 @@
         .validation-error.show {
             display: block;
         }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .ideas-container {
+                padding: var(--spacing-md);
+            }
+
+            .ideas-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-sm);
+            }
+
+            .ideas-controls {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .scorecard {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-sm);
+            }
+
+            .ideas-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+
+            .idea-card {
+                padding: var(--spacing-md);
+            }
+
+            .idea-card h3 {
+                font-size: 0.9rem;
+            }
+
+            .idea-meta {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .idea-meta span {
+                font-size: 0.7rem;
+            }
+
+            .hypothesis-box {
+                font-size: 0.8rem;
+                padding: var(--spacing-sm);
+            }
+
+            .backtest-results {
+                padding: var(--spacing-sm);
+            }
+
+            .backtest-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-xs);
+            }
+
+            .idea-actions {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .idea-actions button {
+                font-size: 0.7rem;
+                padding: 6px 10px;
+            }
+
+            .page-nav {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                gap: var(--spacing-xs);
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .page-nav a {
+                font-size: 0.75rem;
+                padding: var(--spacing-xs) var(--spacing-sm);
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .scorecard {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .backtest-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .modal-content {
+                width: calc(100% - 24px) !important;
+                margin: 12px;
+                max-height: 85vh;
+                overflow-y: auto;
+            }
+        }
     </style>
 </head>
-<body>
+<body style="background:#0d1117;color:#e6edf3;">
     <div class="app-container" style="display: block;">
         <!-- Header -->
         <header class="header">

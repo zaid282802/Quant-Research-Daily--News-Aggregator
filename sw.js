@@ -11,7 +11,7 @@
  */
 
 const CACHE_NAME = 'qrd-cache-v1';
-const STATIC_CACHE = 'qrd-static-v1';
+const STATIC_CACHE = 'qrd-static-v2';
 const DATA_CACHE = 'qrd-data-v1';
 
 // Static assets to cache

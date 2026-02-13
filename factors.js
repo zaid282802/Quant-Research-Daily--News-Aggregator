@@ -1,4 +1,11 @@
 /**
+ * Quant Research Daily (QRD)
+ * Copyright (c) 2025-2026 Zaid Annigeri
+ * Licensed under the MIT License
+ * https://github.com/zaid282802/Quant-Research-Daily--News-Aggregator
+ */
+
+/**
  * Factor Performance Dashboard Module
  * Tracks Fama-French factors, momentum, quality, and other systematic factors
  * Data sources: Ken French Data Library, AQR Data

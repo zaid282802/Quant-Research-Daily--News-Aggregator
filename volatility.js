@@ -1,4 +1,11 @@
 /**
+ * Quant Research Daily (QRD)
+ * Copyright (c) 2025-2026 Zaid Annigeri
+ * Licensed under the MIT License
+ * https://github.com/zaid282802/Quant-Research-Daily--News-Aggregator
+ */
+
+/**
  * Volatility Surface & Term Structure Module
  * Tracks VIX term structure, put/call skew, and implied volatility metrics
  */

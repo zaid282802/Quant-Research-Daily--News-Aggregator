@@ -1,4 +1,11 @@
 /**
+ * Quant Research Daily (QRD)
+ * Copyright (c) 2025-2026 Zaid Annigeri
+ * Licensed under the MIT License
+ * https://github.com/zaid282802/Quant-Research-Daily--News-Aggregator
+ */
+
+/**
  * CFTC Commitment of Traders (COT) Positioning Dashboard for QRD
  * Fetches COT data from CFTC Socrata API, computes net speculative positioning,
  * z-scores, and extreme alerts. Falls back to realistic simulated data on CORS failure.

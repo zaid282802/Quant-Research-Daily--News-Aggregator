@@ -1,4 +1,11 @@
 /**
+ * Quant Research Daily (QRD)
+ * Copyright (c) 2025-2026 Zaid Annigeri
+ * Licensed under the MIT License
+ * https://github.com/zaid282802/Quant-Research-Daily--News-Aggregator
+ */
+
+/**
  * Backtest Template Generator
  * Generates Python code skeletons for different strategy types
  * Links to existing project patterns in Nat_Gas, portfolio_var_analysis, unemployment_alpha_model

@@ -1,4 +1,11 @@
 /**
+ * Quant Research Daily (QRD)
+ * Copyright (c) 2025-2026 Zaid Annigeri
+ * Licensed under the MIT License
+ * https://github.com/zaid282802/Quant-Research-Daily--News-Aggregator
+ */
+
+/**
  * Quant Research Daily - News Aggregator
  * Fetches and displays financial news for quantitative researchers
  * Enhanced with real-time market data and research tools

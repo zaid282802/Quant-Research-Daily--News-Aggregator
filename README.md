@@ -1,75 +1,206 @@
 # Quant Research Daily (QRD)
 
-A professional-grade news aggregator and analytics dashboard designed for quantitative finance researchers. Features real-time market data, intelligent tooltips, factor performance tracking, and research workflow tools.
+A professional-grade news aggregator, research dashboard, and market intelligence terminal built for quantitative finance researchers. Aggregates 40+ financial news sources, provides real-time market data with intelligent tooltips, tracks research ideas with falsifiable hypotheses, generates Python backtest code skeletons, and enforces a "prove it or shut up" research discipline.
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Sources](https://img.shields.io/badge/RSS%20sources-40%2B-orange.svg)
+![Pages](https://img.shields.io/badge/pages-8-purple.svg)
+
+## What Makes QRD Different
+
+Most news aggregators collect headlines. QRD builds a **research pipeline**:
+
+```
+News --> Observation --> Falsifiable Hypothesis --> Backtest Code --> Statistical Validation --> Accept/Reject
+```
+
+Every research idea requires a testable prediction. Every backtest reports t-statistics and applies the Harvey-Liu-Zhu (2016) multiple testing threshold. No hand-waving allowed.
+
+---
 
 ## Features
 
-### News Aggregation
-- **23+ News Sources**: WSJ, FT, Bloomberg, Reuters, Fed, ECB, BOE, Alpha Architect, Quantocracy, and more
-- **Smart Categorization**: Auto-classifies news into quant-relevant categories
-- **Priority Scoring**: Highlights critical market updates with visual badges
-- **Hero Section**: Rotating breaking news display with auto-advance
+### News Aggregation (40+ Sources)
 
-### Market Data Dashboard
-- **Real-time Quotes**: S&P 500, NASDAQ, VIX, 10Y Yield, Gold, EUR/USD, WTI Oil, Dow Jones
-- **Smart Fallbacks**: Live data → Cached data → Simulated demo data
-- **Data Source Indicator**: Visual indicator (green=live, yellow=cached, gray=demo)
-- **Hover Tooltips**: Rich instrument details on hover
+| Tier | Sources | Priority | Signal Quality |
+|------|---------|----------|----------------|
+| **Tier 1** | arXiv q-fin, AQR, Quantpedia, Two Sigma, Alpha Architect, Quantocracy | 10 | Alpha-generating research |
+| **Tier 2** | Federal Reserve, ECB, NY Fed, St. Louis Fed, BIS, IMF | 8-9 | Market-moving intelligence |
+| **Tier 3** | CBOE, Wilmott, NBER, Epsilon Theory, Macrosynergy, IBKR Quant | 6-7 | Practitioner insights |
+| **Tier 4** | WSJ, Reuters, Bloomberg, FT, CNBC, MarketWatch, EIA | 4-5 | News & market color |
 
-### Intelligent Hover Tooltips
+- **Smart Auto-Categorization**: Classifies into 10 categories including Academic Research and Energy
+- **Priority Scoring**: Articles scored 1-10 based on source tier, category, and recency
+- **Claim Tagging**: Every article tagged as:
+  - `Data` (green) -- contains numbers, statistics, reported data
+  - `Official` (blue) -- from Fed, ECB, IMF, or other institutional sources
+  - `Narrative` (amber) -- opinion, forecast, prediction
 
-#### Market Instrument Tooltips
-Hover over any market item to see:
-- Full instrument name and symbol
-- Market interpretation (bullish/bearish signals)
-- Key support/resistance levels
-- Related news article count
-- Trading hours
+### Market Data Bar (12 Instruments)
 
-#### Category Tooltips
-Hover over any category badge to see:
-- Category description
-- Key metrics to watch
-- Why it matters for quants
-- Trading implications
-- Current article count
+| Instrument | Category | Key Signal |
+|------------|----------|------------|
+| S&P 500 | Equity | Risk-on/off sentiment |
+| NASDAQ | Equity | Tech/growth indicator |
+| Dow Jones | Equity | Blue-chip industrial |
+| VIX | Volatility | Fear gauge (4 regime levels) |
+| 10Y Yield | Fixed Income | Rate expectations |
+| 5Y Yield | Fixed Income | Mid-curve, mortgage proxy |
+| **2s10s Spread** | Fixed Income | **Recession predictor** (shows INVERTED badge when negative) |
+| Gold | Commodity | Safe haven, inflation hedge |
+| WTI Oil | Commodity | Energy, inflation pressure |
+| EUR/USD | Currency | Fed vs ECB dynamics |
+| **Bitcoin** | Crypto | Risk-on / liquidity indicator |
+| **DXY** | FX | Dollar strength vs 6 majors |
+| **Copper** | Commodity | Dr. Copper -- economic barometer |
 
-### Hot News Panel
-- **Floating Alert Widget**: Real-time critical news in bottom-right corner
-- **Keyword Detection**: Monitors for VIX spikes, FOMC, rate decisions, crashes
-- **Category Filtering**: Filter alerts by category
-- **Collapsible Design**: Minimize when not needed
+- **Smart Fallback Chain**: Live Yahoo Finance --> Cached data --> Simulated demo data
+- **Data Source Indicator**: Green (live), Yellow (cached), Gray (demo)
+- **Rich Hover Tooltips**: Bullish/bearish interpretation, key support/resistance levels
 
-### Research Tools
-- **Research Ideas Tracker**: Save articles with one click (💡 button)
-- **Status Workflow**: New → In Progress → Completed → Archived
-- **Test This Feature**: Generate Python backtest code skeletons
-- **Backtest Results Tracking**: Store Sharpe, max drawdown, win rate
+### Event Countdown Bar
 
-### Test This - Backtest Code Generator
+Live countdown to next market-moving events, displayed below the market bar:
+- **FOMC decisions** (red, critical)
+- **CPI releases** (orange, high impact)
+- **Non-Farm Payrolls** (orange, high impact)
+- **Options Expiration** (blue, medium impact)
 
-Generate Python backtest code based on your research ideas:
+Links to the full Economic Calendar page.
 
-| Template | Based On | Use Case |
-|----------|----------|----------|
-| Macro Signal | `unemployment_alpha_model/` | Economic indicators → allocation |
-| Commodity | `Nat_Gas/` | Walk-forward commodity backtesting |
-| Risk/VaR | `portfolio_var_analysis/` | VaR calculation and validation |
-| Factor | Standalone | Factor timing and rotation |
+---
 
-### Analytics Dashboard
-- **Factor Performance**: Track Momentum, Value, Quality, Size, Low Vol via ETF proxies
-- **VIX Term Structure**: Real-time contango/backwardation analysis
-- **D3.js Charts**: Interactive visualizations
-- **TradingView Integration**: Embedded professional charts
+## Pages (8 Total)
 
-### Enhanced Storage
-- **IndexedDB**: Large-capacity local storage
-- **Service Worker**: Offline access to cached news
-- **Automatic Cleanup**: Manages old data
+### 1. News Feed (`index.html`)
+- Hero breaking news section with auto-rotation
+- Market bar with 12 instruments + hover tooltips
+- Event countdown bar (next FOMC, CPI, NFP, OpEx)
+- News grid with priority badges, category colors, claim tags
+- Hot news floating panel with critical keyword detection
+- Sidebar: Economic calendar, volatility monitor, recent papers, correlation alerts, research ideas, factor performance
+- Category tabs: All, Volatility, Central Banks, Systematic, Factors, Fixed Income, Macro, Commodities, Academic Research, Energy
+
+### 2. Analytics Dashboard (`dashboard.html`)
+- VIX term structure (contango/backwardation)
+- Factor performance: Momentum, Value, Quality, Size, Low Vol via ETF proxies
+- TradingView embedded charts: S&P 500, sector heatmap
+- D3.js interactive visualizations
+
+### 3. Archive (`archive.html`)
+- Historical news search with date/category/source filters
+- Export to CSV
+- 7-day retention (configurable)
+
+### 4. Research Ideas (`research-ideas.html`) -- Prove-It Enhanced
+- **Falsifiable Hypothesis** (required) -- forces "If X, then Y" framing
+- **Expected Effect Size** -- < 50bp, 50-100bp, 100-300bp, 300bp+
+- **Timeframe** -- Intraday through 3-12 months
+- **Asset Class** -- Equity, Fixed Income, Commodities, FX, Vol, Cross-Asset
+- **Backtest Results Section** (collapsible per idea):
+  - Sharpe Ratio, t-Statistic, Max Drawdown, Win Rate, Number of Trades
+  - In-Sample and Out-of-Sample periods
+- **Prove-It Badges**:
+  - PROVEN (green): t-stat > 3.0, has OOS results, Sharpe > 0.5
+  - MARGINAL (yellow): 2.0 < t-stat < 3.0 or missing OOS
+  - UNPROVEN (red): t-stat < 2.0 or no backtest
+  - HLZ WARNING: "Multiple Testing Risk" when t-stat < 3.0
+- **Research Scorecard**: Total ideas, tested %, passing (green) count, success rate, avg Sharpe
+- **Sorting**: By date, status, prove-it badge, or effect size
+- **Test This**: Generate Python backtest code from templates
+- Export to JSON/CSV (includes hypothesis, badge, Sharpe, t-stat columns)
+
+### 5. Economic Calendar (`calendar.html`)
+- **TradingView Economic Calendar Widget** -- NFP, CPI, FOMC, PMI, GDP, Jobless Claims
+- **Fed Speaker Schedule** -- All 15 FOMC members with hawk/dove/neutral classification and voting status
+- **FOMC Meeting Dates** -- Full 2026 schedule with countdown to next meeting
+- **OpEx Calendar** -- Monthly options expiration (3rd Friday) + Quad Witching dates (Mar/Jun/Sep/Dec)
+
+### 6. CFTC COT Positioning Dashboard (`cot.html`)
+- **8 Key Futures Contracts**: E-Mini S&P 500, 10Y T-Note, Gold, WTI Crude, Natural Gas, Euro FX, Yen, Dollar Index
+- **Data Source**: CFTC Socrata API (free, public domain) with simulated fallback for CORS
+- **Per-Contract Cards**:
+  - Net speculative position (long - short) with weekly change
+  - Net as % of open interest
+  - Z-score bar (-3sigma to +3sigma) with color-coded fill
+  - SVG sparkline of historical positioning
+  - "EXTREME LONG" / "EXTREME SHORT" badge at |z| > 2.0
+- **Extreme Alert System**: Auto-flags contracts at > 2 standard deviations from mean
+- **Timeframe Selector**: 13wk, 26wk, 52wk, 104wk lookback
+- **24hr localStorage Cache**
+
+### 7. Academic Paper Tracker (`papers.html`)
+- **arXiv q-fin RSS**: All subcategories -- Statistical Finance, Computational Finance, Risk Management, Trading & Microstructure, Portfolio Management, Mathematical Finance, plus stat.ML
+- **Author Watchlist**: Cartea, Avellaneda, Lopez de Prado, Bryan Kelly, Novy-Marx, Cliff Asness, Pedersen, Moskowitz, Dacheng Xiu, Stefan Nagel, Malamud, Bouchaud
+  - Watched author papers get gold border + badge
+- **Paper Cards**: Title (linked to arXiv), authors, truncated abstract, subcategory badges, date
+- **Save to Research Ideas**: Pre-fills idea with paper title and link
+- **Auto-Template Suggestion**: Maps subcategory to backtest template (e.g., q-fin.RM -> Risk/VaR template)
+- **Search/Filter**: By subcategory, date range, author
+
+### 8. Cross-Asset Correlation Monitor (`correlations.html`)
+- **8-Asset Universe**: SPY, TLT, GLD, DXY, VIX, HYG, USO, EEM
+- **Rolling Correlation Heatmap**: 30-day, 60-day, 90-day windows via D3.js
+- **Regime Detection Alerts**:
+  - SPY-TLT sign flip (stock-bond correlation turning positive = inflation regime)
+  - VIX-SPY weakening (less negative = tail risk may be underpriced)
+  - DXY-EEM decoupling (dollar-EM sensitivity shifting)
+  - Any pair deviating > 0.30 from 1-year baseline
+- **Historical Comparison**: Current correlation matrix vs 1Y/5Y averages
+- **Alert Caching**: Regime alerts cached to localStorage for main page indicator
+
+---
+
+## Backtest Templates
+
+Generate Python code skeletons linked to your research ideas:
+
+| Template | Based On | Use Case | Key Features |
+|----------|----------|----------|--------------|
+| Macro Signal | `unemployment_alpha_model/` | Economic indicators --> allocation | FRED API, rebalancing, position sizing |
+| Commodity | `Nat_Gas/` | Walk-forward commodity trading | Expanding window, sklearn, directional accuracy |
+| Risk/VaR | `portfolio_var_analysis/` | VaR calculation and validation | Historical/Parametric/Monte Carlo VaR, Kupiec test |
+| Factor | Standalone | Factor timing and rotation | 7 factor ETFs, momentum-based rotation |
+| **COT Positioning** | Standalone | Contrarian signals from CFTC data | Z-score extremes, CFTC API fetch, mean reversion |
+
+**All Templates Auto-Include**:
+- Transaction cost model (configurable, default 5-10bp)
+- Prove-It validation: t-statistic, Sharpe, max drawdown, Harvey-Liu-Zhu threshold check
+- Walk-forward out-of-sample split (70/30 default)
+- Results summary with pass/marginal/fail classification
+
+---
+
+## File Structure
+
+```
+News/
+├── index.html              # Main news feed (hero, market bar, countdown, widgets)
+├── dashboard.html          # Analytics dashboard (VIX, factors, TradingView)
+├── archive.html            # Historical news archive
+├── research-ideas.html     # Research ideas with Prove-It system
+├── calendar.html           # Economic calendar + Fed speakers + OpEx
+├── cot.html                # CFTC COT positioning dashboard
+├── papers.html             # Academic paper tracker (arXiv)
+├── correlations.html       # Cross-asset correlation monitor
+├── styles.css              # Global styling (~2100 lines, dark theme)
+├── app.js                  # Core logic (~2400 lines): sources, market data, tooltips
+├── backtest-templates.js   # Python code generators (5 templates + prove-it validation)
+├── calendar.js             # Fed speakers, FOMC dates, OpEx calendar
+├── cot.js                  # COT data fetching, z-score, sparklines
+├── papers.js               # arXiv RSS, author watchlist, paper cards
+├── correlations.js         # Rolling correlation, Cholesky sim, regime detection
+├── storage.js              # IndexedDB storage module
+├── volatility.js           # VIX tracking module
+├── factors.js              # Factor performance module
+├── charts.js               # D3.js chart components
+├── sw.js                   # Service Worker (caches all 8 pages + modules)
+├── favicon.svg             # Site favicon
+└── README.md               # This file
+```
+
+---
 
 ## Quick Start
 
@@ -81,256 +212,140 @@ Generate Python backtest code based on your research ideas:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/quant-research-daily.git
-cd quant-research-daily
+git clone https://github.com/zaid282802/Quant-Research-Daily--News-Aggregator.git
+cd Quant-Research-Daily--News-Aggregator
 
 # Start the local server
 python -m http.server 8000
 
-# Open in browser
-# Navigate to http://localhost:8000
+# Open http://localhost:8000
 ```
 
-### Alternative: Node.js
+### Alternative
 ```bash
-npx serve .
+npx serve .                          # Node.js
 ```
+Or right-click `index.html` --> "Open with Live Server" in VS Code.
 
-### Alternative: VS Code Live Server
-Right-click `index.html` → "Open with Live Server"
+---
 
-## File Structure
+## API Integrations
 
-```
-News/
-├── index.html              # Main news feed with hero section
-├── dashboard.html          # Analytics dashboard (VIX, factors, charts)
-├── archive.html            # Historical news archive
-├── research-ideas.html     # Research ideas with Test This feature
-├── styles.css              # All styling (dark theme, tooltips)
-├── app.js                  # Core application logic + tooltips
-├── backtest-templates.js   # Python code generators
-├── storage.js              # IndexedDB storage module
-├── volatility.js           # VIX tracking module
-├── factors.js              # Factor performance module
-├── charts.js               # D3.js chart components
-├── sw.js                   # Service Worker for offline
-├── favicon.svg             # Site favicon
-└── README.md               # This file
-```
+| API | Purpose | Auth | Rate Limit |
+|-----|---------|------|------------|
+| rss2json.com | RSS feed parsing | None | 10K/day |
+| Yahoo Finance | Market data (12 instruments) | None | Varies (CORS fallback) |
+| CFTC Socrata | COT positioning data | None | Unlimited (public domain) |
+| arXiv | Academic paper feeds | None | Unlimited |
+| TradingView | Embedded widgets + econ calendar | None | Free embeds |
+| Finnhub (optional) | Real-time quotes | Free key | 60/min |
 
-## Pages
-
-### 1. News Feed (`index.html`)
-- **Hero Section**: Top 5 breaking news with auto-rotation
-- **Market Bar**: Live/cached/demo data with hover tooltips
-- **News Grid**: Cards with priority badges and category colors
-- **Hot News Panel**: Floating critical alerts
-- **Category Tabs**: Filter by Volatility, Central Banks, Factors, etc.
-
-### 2. Analytics Dashboard (`dashboard.html`)
-- **Volatility Surface**: VIX spot, term structure, regime analysis
-- **Factor Dashboard**: 6 factors with multi-period returns
-- **TradingView Charts**: S&P 500, sector heatmap, economic calendar
-- **D3.js Visualizations**: Bar charts, correlation heatmap
-
-### 3. Archive (`archive.html`)
-- Search and filter historical news
-- Export to CSV
-- 7-day retention (configurable)
-
-### 4. Research Ideas (`research-ideas.html`)
-- Track ideas from news to backtest
-- Status workflow with visual indicators
-- Add notes and hypotheses
-- **Test This**: Generate backtest code
-- View past backtest results
-- Export to JSON/CSV
-
-## Hover Tooltip Reference
-
-### Market Instruments
-
-| Instrument | Category | Key Insight |
-|------------|----------|-------------|
-| S&P 500 | Equity Index | Risk-on/off sentiment |
-| NASDAQ | Equity Index | Tech/growth indicator |
-| VIX | Volatility | Fear gauge (4 levels shown) |
-| 10Y Yield | Fixed Income | Rate expectations |
-| Gold | Commodity | Safe haven, inflation hedge |
-| EUR/USD | Currency | Fed vs ECB dynamics |
-| WTI Oil | Commodity | Energy, inflation pressure |
-| Dow Jones | Equity Index | Blue-chip industrial |
-
-### News Categories
-
-| Category | Icon | Key Metrics |
-|----------|------|-------------|
-| Volatility | 📊 | VIX, Put/Call Ratio, Skew |
-| Central Banks | 🏦 | Fed Funds, ECB Rate, Dot Plot |
-| Systematic | 🤖 | CTA flows, Risk parity, Momentum |
-| Factors | 📈 | HML, SMB, UMD, QMJ, BAB |
-| Fixed Income | 💵 | 10Y Yield, 2s10s, Spreads |
-| Macro | 🌍 | NFP, CPI, PMI, GDP |
-| Commodities | 🛢️ | WTI, Gold, DXY, Copper |
-| Markets | 📰 | S&P 500, Breadth, Rotation |
-
-## Factor Performance
-
-Tracks Fama-French factors via ETF proxies:
-
-| Factor | ETF Proxy | Description |
-|--------|-----------|-------------|
-| Market (Mkt-RF) | SPY | Excess return over risk-free |
-| Size (SMB) | IWM vs SPY | Small minus Big |
-| Value (HML) | IWD vs IWF | Value minus Growth |
-| Momentum (UMD) | MTUM vs SPY | Winners minus Losers |
-| Profitability (RMW) | QUAL vs SPY | Quality premium |
-| Low Volatility | USMV vs SPY | Low vol premium |
-
-**Data Sources for Research:**
-- [Ken French Data Library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html)
-- [AQR Datasets](https://www.aqr.com/Insights/Datasets)
-
-## Volatility Analysis
-
-### VIX Term Structure
-- **Contango**: Normal market (VX1 > VIX spot) - Positive carry for short vol
-- **Backwardation**: Fear/stress (VX1 < VIX spot) - Negative carry, flight to safety
-
-### Regime Interpretation
-| VIX Level | Regime | Implication |
-|-----------|--------|-------------|
-| < 15 | Low | Complacency, sell premium |
-| 15-20 | Normal | Standard conditions |
-| 20-30 | Elevated | Reduce leverage |
-| > 30 | Extreme | Mean reversion opportunity |
-
-## Hot News Keywords
-
-The hot news panel monitors for these critical terms:
-- `vix spike`, `vix surges`, `volatility surge`
-- `fed rate`, `fomc`, `rate decision`, `rate cut`, `rate hike`
-- `emergency`, `crash`, `plunge`, `circuit breaker`, `flash crash`
-- `inflation surprise`, `cpi surprise`, `jobs report`, `nfp`
-- `bank failure`, `credit crunch`, `liquidity crisis`
-- `geopolitical`, `war`, `sanctions`, `tariff`
-
-## Customization
-
-### Add New News Source
-Edit `app.js` → `CONFIG.SOURCES`:
-```javascript
-new_source: {
-    name: 'Source Name',
-    url: 'https://example.com/rss.xml',
-    category: 'markets', // or volatility, factors, etc.
-    priority: 'high'     // or medium, low
-}
-```
-
-### Add Instrument Tooltip
-Edit `app.js` → `INSTRUMENT_INFO`:
-```javascript
-'New Instrument': {
-    symbol: 'SYMBOL',
-    fullName: 'Full Name',
-    description: 'What it measures',
-    category: 'Category',
-    interpretation: {
-        bullish: 'What rising means',
-        bearish: 'What falling means'
-    },
-    relatedNews: ['category1', 'category2'],
-    keyLevels: { support: 100, resistance: 150 },
-    tradingHours: '9:30 AM - 4:00 PM ET'
-}
-```
-
-### Add Category Tooltip
-Edit `app.js` → `CATEGORY_INFO`:
-```javascript
-'new-category': {
-    name: 'Category Name',
-    icon: '📊',
-    description: 'What this covers',
-    keyMetrics: ['Metric1', 'Metric2'],
-    whyItMatters: 'Relevance for quants',
-    tradingImplications: ['Implication 1', 'Implication 2']
-}
-```
-
-### Adjust Cache Duration
-Edit `app.js`:
-```javascript
-CACHE_DURATION: 30 * 60 * 1000,       // News: 30 min
-MARKET_CACHE_DURATION: 5 * 60 * 1000  // Market data: 5 min
-```
-
-## API Integration
-
-### Currently Used (Free, No Key Required)
-- **Yahoo Finance**: Market data, ETF prices
-- **RSS-to-JSON**: RSS feed parsing
-- **TradingView**: Embedded charts (widgets)
-
-### Optional API Keys (Free Tiers)
-| API | Use Case | Free Tier |
-|-----|----------|-----------|
-| Alpha Vantage | Historical data | 500 calls/day |
-| Finnhub | Real-time quotes | 60 calls/min |
-| FRED | Economic data | Unlimited |
-| Polygon.io | Market data | 5 calls/min |
+---
 
 ## Research Workflow
 
 ### Daily Routine
-1. **Morning (15 min)**: Refresh → Scan high-priority → Check VIX regime
-2. **During Day**: Save interesting articles with 💡 → Check hot news panel
-3. **Evening (20 min)**: Review saved ideas → Add research notes
-4. **Weekend**: Use Test This → Generate backtest code → Run analysis
+1. **Morning (15 min)**: Refresh --> Scan high-priority --> Check VIX regime --> Glance at countdown bar
+2. **During Day**: Save articles with a click --> Check hot news panel --> Note COT extremes
+3. **Evening (20 min)**: Review saved ideas --> Add falsifiable hypotheses --> Check correlation alerts
+4. **Weekend**: Generate backtest code --> Run analysis --> Record results --> Earn prove-it badges
 
-### Idea Pipeline
+### Prove-It Pipeline
 ```
-News → Observation → Hypothesis → Test This → Backtest → Results
+News Article
+  --> Save as Research Idea (hypothesis REQUIRED)
+    --> "If [X], then [Y] within [timeframe]"
+      --> Test This --> Python backtest code
+        --> Run --> Record Sharpe, t-stat, drawdown
+          --> Badge: PROVEN / MARGINAL / UNPROVEN
+            --> Scorecard: batting average across all ideas
 ```
+
+### Interview Value
+When asked "How do you stay on top of markets?", QRD is the answer:
+- **Vol Surface knowledge** --> CBOE feed + VIX regime tracking
+- **Cross-Asset thinking** --> Correlation monitor + 12-instrument market bar
+- **Statistical rigor** --> Prove-It system = t > 3.0 or it's noise
+- **Market awareness** --> Economic calendar + COT positioning + countdown timer
+- **Research process** --> Hypothesis --> Backtest --> Validate --> Accept/Reject
+
+---
 
 ## Keyboard Shortcuts
 
 | Key | Action |
 |-----|--------|
 | R | Refresh news |
-| 1-8 | Switch category tabs |
+| 1-9 | Switch category tabs |
 | Esc | Close modals |
 
-## Browser Support
+---
 
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
+## Customization
+
+### Add a News Source
+Edit `app.js` --> `CONFIG.SOURCES`:
+```javascript
+new_source: {
+    name: 'Source Name',
+    url: 'https://example.com/rss.xml',
+    category: 'academic',  // or energy, systematic, factors, etc.
+    priority: 10           // 1-10 scale
+}
+```
+
+### Add a Market Instrument
+Edit `app.js` --> `INSTRUMENT_INFO`:
+```javascript
+'New Instrument': {
+    symbol: 'SYMBOL',
+    name: 'Full Name',
+    category: 'Category',
+    description: 'What it measures',
+    interpretation: {
+        bullish: 'What rising means',
+        bearish: 'What falling means'
+    },
+    keyLevels: { support: [100, 95], resistance: [110, 120] }
+}
+```
+
+### Add a Backtest Template
+Edit `backtest-templates.js`:
+```javascript
+new_template: {
+    name: 'Template Name',
+    description: 'What it does',
+    dependencies: ['pandas', 'numpy'],
+    generate: (config) => `... Python code ...`
+}
+```
+
+---
 
 ## Troubleshooting
 
-### News not loading?
-1. Check browser console for errors
-2. Ensure running on localhost (CORS)
-3. RSS-to-JSON API may have rate limits
+| Issue | Fix |
+|-------|-----|
+| News not loading | Check console; RSS-to-JSON may be rate-limited |
+| Market data shows "Demo" | Yahoo Finance CORS blocked; demo data is the fallback |
+| COT data shows "Simulated" | CFTC API CORS from browser; simulated data is realistic |
+| Papers not loading | arXiv RSS via rss2json; check rate limits |
+| Tooltips not appearing | Wait ~200ms after hover; check console |
+| Service Worker stale | Hard refresh (Ctrl+Shift+R) or clear site data |
 
-### Market data showing "Demo"?
-1. Yahoo Finance API blocked by CORS
-2. Demo data is shown as fallback
-3. Consider adding Finnhub API key for live data
+---
 
-### Tooltips not appearing?
-1. Ensure JavaScript is enabled
-2. Wait ~200ms after hovering (intentional delay)
-3. Check console for errors
+## Tech Stack
 
-### Service Worker issues?
-1. Hard refresh: Ctrl+Shift+R
-2. Clear site data in DevTools
-3. Unregister SW in DevTools → Application → Service Workers
+- **Frontend**: Pure HTML5/CSS3/JavaScript (ES6+) -- no frameworks
+- **Charts**: D3.js, TradingView widgets
+- **Storage**: LocalStorage + IndexedDB
+- **Offline**: Service Worker with cache-first strategy
+- **Fonts**: Inter + JetBrains Mono
+- **Theme**: Dark mode with custom CSS properties
+
+---
 
 ## Contributing
 
@@ -346,10 +361,13 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
 
-- News sources: WSJ, Reuters, Bloomberg, Federal Reserve, ECB, BOE, Alpha Architect, Quantocracy
-- Fonts: Inter, JetBrains Mono (Google Fonts)
-- Charts: D3.js, TradingView
+- **Tier 1 Sources**: arXiv, AQR, Quantpedia, Two Sigma, Alpha Architect, Quantocracy
+- **Institutional Sources**: Federal Reserve, ECB, NY Fed, BIS, IMF, NBER
+- **Data**: CFTC (COT reports), Yahoo Finance, TradingView
+- **Research**: Harvey, Liu & Zhu (2016) -- "...and the Cross-Section of Expected Returns" (t > 3.0 threshold)
+- **Fonts**: Inter, JetBrains Mono (Google Fonts)
+- **Charts**: D3.js, TradingView
 
 ---
 
-**Built for Quantitative Researchers. Signal > Noise.** 📈
+**Built for Quantitative Researchers. Prove It or Shut Up.**

@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFTC COT Positioning | Quant Research Daily</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* =====================================================
+           CFTC COT Positioning Dashboard Styles
+           ===================================================== */
+
+        /* Page Navigation */
+        .page-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--bg-tertiary) transparent;
+        }
+
+        .page-nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .page-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .page-nav::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+        }
+
+        .page-nav a {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+        }
+
+        .page-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .page-nav a.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* COT Container */
+        .cot-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        /* Page Header */
+        .cot-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .cot-page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        /* Filter Bar */
+        .cot-filter-bar {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .cot-filter-group {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .cot-filter-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cot-select {
+            padding: 8px 32px 8px 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-md);
+            background: #12121a;
+            color: #e0e0e0;
+            font-size: 0.8125rem;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        .cot-select:focus {
+            outline: none;
+            border-color: #64b5f6;
+        }
+
+        .cot-select:hover {
+            border-color: #999;
+        }
+
+        .cot-refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #12121a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-md);
+            color: #e0e0e0;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .cot-refresh-btn:hover {
+            background: #64b5f6;
+            border-color: #64b5f6;
+            color: white;
+        }
+
+        .cot-refresh-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .cot-refresh-btn.loading svg {
+            animation: cot-spin 1s linear infinite;
+        }
+
+        @keyframes cot-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cot-data-source {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.75rem;
+            color: #666;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cot-source-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff9800;
+            animation: cot-pulse 2s ease-in-out infinite;
+        }
+
+        .cot-source-dot.live {
+            background: #4caf50;
+        }
+
+        .cot-source-dot.simulated {
+            background: #ff9800;
+        }
+
+        @keyframes cot-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Last Updated */
+        .cot-last-updated {
+            font-size: 0.6875rem;
+            color: #666;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Summary Stats Row */
+        .cot-summary-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .cot-summary-stat {
+            background: #12121a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md) var(--spacing-lg);
+            text-align: center;
+            transition: all 0.15s ease;
+        }
+
+        .cot-summary-stat:hover {
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-1px);
+        }
+
+        .cot-summary-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.2;
+        }
+
+        .cot-summary-value.green { color: #4caf50; }
+        .cot-summary-value.red { color: #f44336; }
+        .cot-summary-value.orange { color: #ff9800; }
+        .cot-summary-value.blue { color: #64b5f6; }
+
+        .cot-summary-label {
+            font-size: 0.6875rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        /* Contracts Grid */
+        .cot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* Contract Card */
+        .cot-card {
+            background: #12121a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cot-card:hover {
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .cot-card.extreme-long {
+            border-left: 4px solid #4caf50;
+        }
+
+        .cot-card.extreme-short {
+            border-left: 4px solid #f44336;
+        }
+
+        .cot-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cot-card-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .cot-card-symbol {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #e0e0e0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cot-card-name {
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .cot-category-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .cot-category-badge.equity { background: rgba(100,181,246,0.15); color: #64b5f6; border: 1px solid rgba(100,181,246,0.3); }
+        .cot-category-badge.fixed-income { background: rgba(163,113,247,0.15); color: #a371f7; border: 1px solid rgba(163,113,247,0.3); }
+        .cot-category-badge.commodity { background: rgba(255,152,0,0.15); color: #ff9800; border: 1px solid rgba(255,152,0,0.3); }
+        .cot-category-badge.energy { background: rgba(244,67,54,0.15); color: #f44336; border: 1px solid rgba(244,67,54,0.3); }
+        .cot-category-badge.fx { background: rgba(76,175,80,0.15); color: #4caf50; border: 1px solid rgba(76,175,80,0.3); }
+
+        /* Position Metrics */
+        .cot-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cot-metric {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .cot-metric-label {
+            font-size: 0.625rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cot-metric-value {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            color: #e0e0e0;
+        }
+
+        .cot-metric-value.positive { color: #4caf50; }
+        .cot-metric-value.negative { color: #f44336; }
+
+        /* Net Position Direction Indicator */
+        .cot-direction {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .cot-direction.long {
+            background: rgba(76,175,80,0.1);
+            color: #4caf50;
+            border: 1px solid rgba(76,175,80,0.2);
+        }
+
+        .cot-direction.short {
+            background: rgba(244,67,54,0.1);
+            color: #f44336;
+            border: 1px solid rgba(244,67,54,0.2);
+        }
+
+        .cot-direction-arrow {
+            font-size: 1rem;
+        }
+
+        /* Z-Score Bar */
+        .cot-zscore-container {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cot-zscore-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .cot-zscore-label {
+            font-size: 0.6875rem;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .cot-zscore-value {
+            font-size: 0.875rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cot-zscore-value.positive { color: #4caf50; }
+        .cot-zscore-value.negative { color: #f44336; }
+        .cot-zscore-value.extreme { text-shadow: 0 0 8px currentColor; }
+
+        .cot-zscore-track {
+            position: relative;
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            overflow: visible;
+        }
+
+        .cot-zscore-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.5625rem;
+            color: #666;
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 4px;
+        }
+
+        .cot-zscore-center {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 100%;
+            background: rgba(255,255,255,0.15);
+        }
+
+        .cot-zscore-bar {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            border-radius: 4px;
+            transition: all 0.4s ease;
+            min-width: 2px;
+        }
+
+        .cot-zscore-bar.positive {
+            background: linear-gradient(90deg, rgba(76,175,80,0.3), #4caf50);
+        }
+
+        .cot-zscore-bar.negative {
+            background: linear-gradient(270deg, rgba(244,67,54,0.3), #f44336);
+        }
+
+        .cot-zscore-bar.extreme {
+            animation: cot-extreme-pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes cot-extreme-pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 4px currentColor; }
+            50% { opacity: 0.7; box-shadow: 0 0 12px currentColor; }
+        }
+
+        .cot-zscore-marker {
+            position: absolute;
+            top: -3px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid #0a0a0f;
+            transform: translateX(-50%);
+            z-index: 2;
+            transition: left 0.4s ease;
+        }
+
+        .cot-zscore-marker.positive { background: #4caf50; }
+        .cot-zscore-marker.negative { background: #f44336; }
+        .cot-zscore-marker.extreme {
+            animation: cot-marker-glow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes cot-marker-glow {
+            0%, 100% { box-shadow: 0 0 4px 1px currentColor; }
+            50% { box-shadow: 0 0 10px 3px currentColor; }
+        }
+
+        /* Extreme Zone Indicators */
+        .cot-zscore-extreme-zone {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background: rgba(244,67,54,0.08);
+            border-radius: 4px;
+        }
+
+        .cot-zscore-extreme-zone.left {
+            left: 0;
+            width: 16.67%;
+        }
+
+        .cot-zscore-extreme-zone.right {
+            right: 0;
+            width: 16.67%;
+        }
+
+        /* Sparkline */
+        .cot-sparkline-container {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cot-sparkline-label {
+            font-size: 0.625rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .cot-sparkline {
+            width: 100%;
+            height: 48px;
+        }
+
+        .cot-sparkline path.line {
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .cot-sparkline path.area {
+            opacity: 0.15;
+        }
+
+        .cot-sparkline .zero-line {
+            stroke: rgba(255,255,255,0.1);
+            stroke-width: 0.5;
+            stroke-dasharray: 3 3;
+        }
+
+        /* Extreme Badge */
+        .cot-extreme-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: cot-badge-flash 2s ease-in-out infinite;
+        }
+
+        .cot-extreme-badge.long {
+            background: rgba(76,175,80,0.15);
+            color: #4caf50;
+            border: 1px solid rgba(76,175,80,0.3);
+        }
+
+        .cot-extreme-badge.short {
+            background: rgba(244,67,54,0.15);
+            color: #f44336;
+            border: 1px solid rgba(244,67,54,0.3);
+        }
+
+        @keyframes cot-badge-flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Weekly Change Indicator */
+        .cot-weekly-change {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cot-weekly-change.up { color: #4caf50; }
+        .cot-weekly-change.down { color: #f44336; }
+        .cot-weekly-change.flat { color: #999; }
+
+        /* Extreme Alerts Section */
+        .cot-alerts-section {
+            background: #12121a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .cot-alerts-header {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cot-alerts-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .cot-alerts-count {
+            font-size: 0.75rem;
+            color: #999;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cot-alerts-body {
+            padding: var(--spacing-lg);
+        }
+
+        .cot-alerts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .cot-alert-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            transition: all 0.15s ease;
+        }
+
+        .cot-alert-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .cot-alert-card.alert-long {
+            border-left: 4px solid #4caf50;
+            background: rgba(76,175,80,0.05);
+        }
+
+        .cot-alert-card.alert-short {
+            border-left: 4px solid #f44336;
+            background: rgba(244,67,54,0.05);
+        }
+
+        .cot-alert-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .cot-alert-contract {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: #e0e0e0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cot-alert-zscore {
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cot-alert-zscore.positive { color: #4caf50; }
+        .cot-alert-zscore.negative { color: #f44336; }
+
+        .cot-alert-message {
+            font-size: 0.8125rem;
+            color: #999;
+            line-height: 1.5;
+        }
+
+        .cot-alert-suggestion {
+            font-size: 0.75rem;
+            color: #64b5f6;
+            margin-top: var(--spacing-sm);
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-style: italic;
+        }
+
+        /* All Clear State */
+        .cot-all-clear {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: #4caf50;
+        }
+
+        .cot-all-clear-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cot-all-clear-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .cot-all-clear-text {
+            font-size: 0.8125rem;
+            color: #999;
+        }
+
+        /* Loading State */
+        .cot-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-2xl);
+            color: #999;
+        }
+
+        .cot-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.08);
+            border-top-color: #64b5f6;
+            border-radius: 50%;
+            animation: cot-spin 1s linear infinite;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cot-loading p {
+            font-size: 0.875rem;
+        }
+
+        /* Footer */
+        .cot-footer {
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            color: #666;
+            font-size: 0.75rem;
+        }
+
+        .cot-footer p {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .cot-footer .disclaimer {
+            font-size: 0.6875rem;
+            opacity: 0.7;
+        }
+
+        /* Production Note */
+        .cot-production-note {
+            background: rgba(255,152,0,0.08);
+            border: 1px solid rgba(255,152,0,0.2);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            font-size: 0.75rem;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .cot-production-note svg {
+            width: 16px;
+            height: 16px;
+            color: #ff9800;
+            flex-shrink: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .cot-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cot-page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cot-filter-bar {
+                width: 100%;
+            }
+
+            .cot-summary-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .cot-alerts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-nav {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                gap: var(--spacing-xs);
+            }
+
+            .page-nav a {
+                font-size: 0.75rem;
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+
+            .cot-container {
+                padding: var(--spacing-md);
+            }
+
+            .cot-filter-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cot-summary-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="display: block;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                        <h1 class="logo">QRD</h1>
+                        <span class="logo-text">Quant Research Daily</span>
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <span style="font-size: 0.875rem; color: var(--text-secondary);">COT Positioning</span>
+                    <a href="index.html" class="btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back to News
+                    </a>
+                    <a href="dashboard.html" class="btn" style="background: var(--accent-purple); border-color: var(--accent-purple);">Dashboard</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Bar -->
+        <nav class="page-nav">
+            <a href="index.html">News</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="archive.html">Archive</a>
+            <a href="research-ideas.html">Research Ideas</a>
+            <a href="calendar.html">Calendar</a>
+            <a href="cot.html" class="active">COT</a>
+            <a href="papers.html">Papers</a>
+            <a href="correlations.html">Correlations</a>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="cot-container">
+            <!-- Page Header -->
+            <div class="cot-page-header">
+                <div>
+                    <h2 class="cot-page-title">&#x1F4CA; CFTC Commitment of Traders</h2>
+                    <div class="cot-last-updated" id="cotLastUpdated">Last updated: --</div>
+                </div>
+                <div class="cot-filter-bar">
+                    <div class="cot-filter-group">
+                        <span class="cot-filter-label">Timeframe</span>
+                        <select class="cot-select" id="cotTimeframe">
+                            <option value="13">13 Weeks</option>
+                            <option value="26">26 Weeks</option>
+                            <option value="52" selected>52 Weeks</option>
+                            <option value="104">104 Weeks</option>
+                        </select>
+                    </div>
+                    <div class="cot-filter-group">
+                        <span class="cot-filter-label">Report</span>
+                        <select class="cot-select" id="cotReportType">
+                            <option value="legacy" selected>Legacy</option>
+                            <option value="disaggregated">Disaggregated</option>
+                        </select>
+                    </div>
+                    <button class="cot-refresh-btn" id="cotRefreshBtn" onclick="refreshCOTData()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                    <div class="cot-data-source">
+                        <span class="cot-source-dot" id="cotSourceDot"></span>
+                        <span id="cotSourceLabel">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Production Note -->
+            <div class="cot-production-note" id="cotProductionNote" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span>Displaying simulated COT data with realistic positioning patterns. In production, this fetches live data from the CFTC Socrata API.</span>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="cot-summary-row" id="cotSummaryRow">
+                <div class="cot-summary-stat">
+                    <div class="cot-summary-value blue" id="cotTotalContracts">8</div>
+                    <div class="cot-summary-label">Contracts Tracked</div>
+                </div>
+                <div class="cot-summary-stat">
+                    <div class="cot-summary-value green" id="cotNetLong">--</div>
+                    <div class="cot-summary-label">Net Long</div>
+                </div>
+                <div class="cot-summary-stat">
+                    <div class="cot-summary-value red" id="cotNetShort">--</div>
+                    <div class="cot-summary-label">Net Short</div>
+                </div>
+                <div class="cot-summary-stat">
+                    <div class="cot-summary-value orange" id="cotExtremeCount">--</div>
+                    <div class="cot-summary-label">Extreme Signals</div>
+                </div>
+            </div>
+
+            <!-- Contracts Grid -->
+            <div class="cot-grid" id="cotGrid">
+                <div class="cot-loading">
+                    <div class="cot-loading-spinner"></div>
+                    <p>Fetching COT data from CFTC...</p>
+                </div>
+            </div>
+
+            <!-- Extreme Alerts Section -->
+            <div class="cot-alerts-section" id="cotAlertsSection">
+                <div class="cot-alerts-header">
+                    <span class="cot-alerts-title">&#x26A0;&#xFE0F; Extreme Positioning Alerts</span>
+                    <span class="cot-alerts-count" id="cotAlertsCount">Scanning...</span>
+                </div>
+                <div class="cot-alerts-body">
+                    <div class="cot-alerts-grid" id="cotAlertsGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="cot-footer">
+            <p>Quant Research Daily - CFTC Commitment of Traders Dashboard</p>
+            <p class="disclaimer">Data sourced from CFTC public reports. Net speculative positions (non-commercial). Not financial advice.</p>
+        </footer>
+    </div>
+
+    <script src="cot.js"></script>
+</body>
+</html>

@@ -222,6 +222,120 @@ const CONFIG = {
             url: 'https://feeds.feedburner.com/zerohedge/feed',
             category: 'markets',
             priority: 'low'
+        },
+
+        // ==================== TIER 1: ALPHA-GENERATING RESEARCH ====================
+        arxiv_qfin: {
+            name: 'arXiv q-fin',
+            url: 'https://rss.arxiv.org/rss/q-fin',
+            category: 'academic',
+            priority: 'critical'
+        },
+        aqr_insights: {
+            name: 'AQR Insights',
+            url: 'https://www.aqr.com/Insights/Research/feed',
+            category: 'factors',
+            priority: 'critical'
+        },
+        quantpedia: {
+            name: 'Quantpedia',
+            url: 'https://quantpedia.com/feed/',
+            category: 'systematic',
+            priority: 'critical'
+        },
+        two_sigma: {
+            name: 'Two Sigma',
+            url: 'https://www.twosigma.com/insights/feed/',
+            category: 'systematic',
+            priority: 'critical'
+        },
+
+        // ==================== TIER 2: MARKET-MOVING INTELLIGENCE ====================
+        ny_fed_liberty: {
+            name: 'NY Fed Liberty Street',
+            url: 'https://libertystreeteconomics.newyorkfed.org/feed/',
+            category: 'macro',
+            priority: 'high'
+        },
+        stlouis_fed: {
+            name: 'St. Louis Fed Blog',
+            url: 'https://fredblog.stlouisfed.org/feed/',
+            category: 'macro',
+            priority: 'high'
+        },
+        bis_research: {
+            name: 'BIS',
+            url: 'https://www.bis.org/doclist/bis_fsi_publs.rss',
+            category: 'macro',
+            priority: 'high'
+        },
+        imf_blog: {
+            name: 'IMF Blog',
+            url: 'https://www.imf.org/en/Blogs/rss',
+            category: 'macro',
+            priority: 'high'
+        },
+
+        // ==================== TIER 3: PRACTITIONER INSIGHTS ====================
+        wilmott: {
+            name: 'Wilmott',
+            url: 'https://wilmott.com/feed/',
+            category: 'academic',
+            priority: 'medium'
+        },
+        epsilon_theory: {
+            name: 'Epsilon Theory',
+            url: 'https://www.epsilontheory.com/feed/',
+            category: 'macro',
+            priority: 'medium'
+        },
+        nber_papers: {
+            name: 'NBER',
+            url: 'https://www.nber.org/rss/new.xml',
+            category: 'academic',
+            priority: 'medium'
+        },
+        macrosynergy: {
+            name: 'Macrosynergy',
+            url: 'https://macrosynergy.com/feed/',
+            category: 'macro',
+            priority: 'medium'
+        },
+        quantstreet: {
+            name: 'QuantStreet Capital',
+            url: 'https://quantstreetcapital.com/feed/',
+            category: 'systematic',
+            priority: 'medium'
+        },
+        ibkr_quant: {
+            name: 'IBKR Quant',
+            url: 'https://www.interactivebrokers.com/campus/ibkr-quant-news/feed/',
+            category: 'systematic',
+            priority: 'medium'
+        },
+        eia_energy: {
+            name: 'EIA Energy',
+            url: 'https://www.eia.gov/rss/todayinenergy.xml',
+            category: 'energy',
+            priority: 'medium'
+        },
+        calculated_risk: {
+            name: 'Calculated Risk',
+            url: 'https://www.calculatedriskblog.com/feeds/posts/default',
+            category: 'macro',
+            priority: 'low'
+        },
+        cme_research: {
+            name: 'CME Group',
+            url: 'https://www.cmegroup.com/rss/',
+            category: 'commodities',
+            priority: 'low'
+        },
+        man_institute: {
+            name: 'Man Institute',
+            url: 'https://www.man.com/insights/feed',
+            category: 'systematic',
+            priority: 'critical'
         }
     },
 
@@ -282,6 +396,19 @@ const CONFIG = {
             'yen', 'currency', 'dxy', 'carry trade', 'lng', 'metals',
             'agriculture', 'wheat', 'corn', 'soybeans', 'platinum',
             'palladium', 'iron ore', 'aluminum', 'energy', 'futures'
+        ],
+        'academic': [
+            'paper', 'working paper', 'preprint', 'arxiv', 'ssrn', 'nber',
+            'journal', 'peer review', 'empirical', 'theoretical', 'econometric',
+            'methodology', 'model', 'estimation', 'calibration', 'simulation',
+            'stochastic', 'martingale', 'ito', 'diffusion', 'pricing model',
+            'microstructure', 'market design', 'optimal execution', 'order book'
+        ],
+        'energy': [
+            'natural gas', 'lng', 'pipeline', 'eia', 'opec+', 'shale',
+            'renewable', 'solar', 'wind power', 'nuclear', 'electricity',
+            'power grid', 'carbon', 'emissions', 'refinery', 'gasoline',
+            'heating oil', 'energy transition', 'baseload', 'peak demand'
         ]
     },
 
@@ -302,8 +429,63 @@ const CONFIG = {
     MARKET_CACHE_DURATION: 5 * 60 * 1000,
 
     // Archive retention (7 days)
-    ARCHIVE_RETENTION: 7 * 24 * 60 * 60 * 1000
+    ARCHIVE_RETENTION: 7 * 24 * 60 * 60 * 1000,
+
+    // Claim tagging keywords
+    CLAIM_TAGS: {
+        'data-driven': [
+            'data shows', 'according to data', 'statistics', 'survey results',
+            'report shows', 'numbers', 'percent', 'basis points', 'bps',
+            'year-over-year', 'quarter-over-quarter', 'seasonally adjusted',
+            'consensus estimate', 'beat expectations', 'missed expectations',
+            'actual vs', 'revised to', 'preliminary', 'index rose', 'index fell'
+        ],
+        'institutional': [
+            'federal reserve', 'ecb', 'bank of japan', 'bank of england',
+            'imf', 'world bank', 'bis', 'treasury department', 'sec',
+            'cftc', 'official statement', 'press conference', 'minutes show',
+            'policy decision', 'regulatory'
+        ],
+        'narrative': [
+            'could', 'might', 'may', 'expected to', 'likely', 'unlikely',
+            'analysts expect', 'traders bet', 'market believes', 'sentiment',
+            'fears', 'hopes', 'optimism', 'pessimism', 'speculation',
+            'rumor', 'sources say', 'according to sources', 'prediction'
+        ]
+    }
 };
+
+// =====================================================
+// Claim Tagging
+// =====================================================
+
+function tagClaim(title, content, sourceKey) {
+    const text = `${title} ${content}`.toLowerCase();
+    const tags = [];
+
+    // Check institutional sources first (always tagged)
+    const institutionalSources = ['fed_press', 'ecb_press', 'boe_news', 'ny_fed_liberty',
+        'stlouis_fed', 'bis_research', 'imf_blog'];
+    if (institutionalSources.includes(sourceKey)) {
+        tags.push('institutional');
+    }
+
+    // Check keyword matches
+    for (const [tag, keywords] of Object.entries(CONFIG.CLAIM_TAGS)) {
+        if (tags.includes(tag)) continue;
+        for (const keyword of keywords) {
+            if (text.includes(keyword.toLowerCase())) {
+                tags.push(tag);
+                break;
+            }
+        }
+    }
+
+    // Default to narrative if no tags
+    if (tags.length === 0) tags.push('narrative');
+
+    return tags;
+}
 
 // =====================================================
 // State Management
@@ -387,12 +569,13 @@ function calculatePriority(item, sourceConfig) {
     let priority = 0;
 
     // Source priority
-    if (sourceConfig.priority === 'high') priority += 3;
+    if (sourceConfig.priority === 'critical') priority += 4;
+    else if (sourceConfig.priority === 'high') priority += 3;
     else if (sourceConfig.priority === 'medium') priority += 2;
     else priority += 1;
 
     // Category priority for quants
-    const highPriorityCategories = ['volatility', 'central-banks', 'systematic', 'factors'];
+    const highPriorityCategories = ['volatility', 'central-banks', 'systematic', 'factors', 'academic'];
     if (highPriorityCategories.includes(item.category)) priority += 2;
 
     // Recency bonus
@@ -513,7 +696,11 @@ async function fetchYahooFinanceData() {
         { symbol: 'GC=F', label: 'Gold' },
         { symbol: 'EURUSD=X', label: 'EUR/USD' },
         { symbol: 'CL=F', label: 'WTI Oil' },
-        { symbol: '^DJI', label: 'Dow Jones' }
+        { symbol: '^DJI', label: 'Dow Jones' },
+        { symbol: 'BTC-USD', label: 'Bitcoin' },
+        { symbol: 'DX-Y.NYB', label: 'DXY' },
+        { symbol: 'HG=F', label: 'Copper' },
+        { symbol: '^FVX', label: '5Y Yield' }
     ];
 
     // Try Yahoo Finance API via a CORS proxy
@@ -556,6 +743,36 @@ async function fetchYahooFinanceData() {
         }
     }
 
+    // Log new instrument data
+    const newInstruments = results.filter(r => ['BTC-USD', 'DX-Y.NYB', 'HG=F', '^FVX'].includes(r.symbol));
+    if (newInstruments.length > 0) {
+        console.log('New instrument data fetched:', newInstruments.map(i => `${i.label}: ${i.value}`).join(', '));
+    }
+
+    // Calculate 2s10s spread (10Y Yield - 5Y Yield)
+    const tenYear = results.find(r => r.symbol === '^TNX');
+    const fiveYear = results.find(r => r.symbol === '^FVX');
+    if (tenYear && fiveYear) {
+        const tenYValue = parseFloat(tenYear.value);
+        const fiveYValue = parseFloat(fiveYear.value);
+        if (!isNaN(tenYValue) && !isNaN(fiveYValue)) {
+            const spread = tenYValue - fiveYValue;
+            const spreadBps = (spread * 100).toFixed(0);
+            const isInverted = spread < 0;
+            console.log(`2s10s spread calculated: ${spread.toFixed(2)}% (${spreadBps}bp) ${isInverted ? '- INVERTED' : ''}`);
+            results.push({
+                label: '2s10s',
+                symbol: '2s10s',
+                value: `${spreadBps}bp`,
+                change: isInverted ? 'INVERTED' : 'Normal',
+                changeNum: spread,
+                positive: !isInverted,
+                is2s10s: true,
+                inverted: isInverted
+            });
+        }
+    }
+
     // If no results, try alternative API
     if (results.length === 0) {
         return await fetchAlternativeMarketData();
@@ -569,6 +786,12 @@ async function fetchAlternativeMarketData() {
     // These are approximate market values for demonstration
     state.marketDataSource = 'simulated';
 
+    const tenYValue = 4.52;
+    const fiveYValue = 4.25;
+    const spread = tenYValue - fiveYValue;
+    const spreadBps = (spread * 100).toFixed(0);
+    const isInverted = spread < 0;
+
     return [
         { label: 'S&P 500', value: '5,842', change: '+0.35%', changeNum: 0.35, positive: true, simulated: true },
         { label: 'NASDAQ', value: '18,456', change: '+0.52%', changeNum: 0.52, positive: true, simulated: true },
@@ -576,14 +799,25 @@ async function fetchAlternativeMarketData() {
         { label: '10Y Yield', value: '4.52%', change: '+0.03%', changeNum: 0.03, positive: true, simulated: true },
         { label: 'Gold', value: '2,035', change: '+0.18%', changeNum: 0.18, positive: true, simulated: true },
         { label: 'EUR/USD', value: '1.0842', change: '-0.12%', changeNum: -0.12, positive: false, simulated: true },
-        { label: 'WTI Oil', value: '76.45', change: '+1.24%', changeNum: 1.24, positive: true, simulated: true }
+        { label: 'WTI Oil', value: '76.45', change: '+1.24%', changeNum: 1.24, positive: true, simulated: true },
+        { label: 'Bitcoin', symbol: 'BTC-USD', value: '95,000', change: '-1.20%', changeNum: -1.2, positive: false, simulated: true },
+        { label: 'DXY', symbol: 'DX-Y.NYB', value: '104.50', change: '+0.30%', changeNum: 0.3, positive: true, simulated: true },
+        { label: 'Copper', symbol: 'HG=F', value: '4.15', change: '-0.50%', changeNum: -0.5, positive: false, simulated: true },
+        { label: '5Y Yield', symbol: '^FVX', value: '4.25%', change: '-0.02%', changeNum: -0.02, positive: false, simulated: true },
+        { label: '2s10s', symbol: '2s10s', value: `${spreadBps}bp`, change: isInverted ? 'INVERTED' : 'Normal', changeNum: spread, positive: !isInverted, is2s10s: true, inverted: isInverted, simulated: true }
     ];
 }
 
 function formatPrice(price, label) {
     if (price === null || price === undefined) return '--';
 
-    if (label.includes('EUR') || label.includes('USD')) {
+    if (label === 'Bitcoin') {
+        return price.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    } else if (label === 'DXY') {
+        return price.toFixed(2);
+    } else if (label === 'Copper') {
+        return price.toFixed(2);
+    } else if (label.includes('EUR') || label.includes('USD')) {
         return price.toFixed(4);
     } else if (label === 'VIX') {
         return price.toFixed(2);
@@ -632,16 +866,33 @@ function renderMarketBar(data, options = {}) {
         <div class="market-source-indicator ${source}">
             ${sourceIndicator}
         </div>
-        ${data.map(item => `
-            <div class="market-item ${item.simulated ? 'simulated' : ''}"
-                 data-symbol="${item.symbol || item.label}"
-                 onmouseenter="showMarketTooltip(event, '${item.label}')"
-                 onmouseleave="hideMarketTooltip()">
-                <span class="market-label">${item.label}</span>
-                <span class="market-value">${item.value}</span>
-                <span class="market-change ${item.positive ? 'positive' : 'negative'}">${item.change}</span>
-            </div>
-        `).join('')}
+        ${data.map(item => {
+            // Special rendering for 2s10s spread
+            if (item.is2s10s) {
+                const invertedClass = item.inverted ? 'inverted' : '';
+                const spreadColor = item.inverted ? 'negative' : 'positive';
+                return `
+                    <div class="market-item ${item.simulated ? 'simulated' : ''} ${invertedClass}"
+                         data-symbol="2s10s"
+                         onmouseenter="showMarketTooltip(event, '2s10s')"
+                         onmouseleave="hideMarketTooltip()">
+                        <span class="market-label">2s10s</span>
+                        <span class="market-value ${spreadColor}">${item.value}</span>
+                        ${item.inverted ? '<span class="market-change negative inverted-badge">INVERTED</span>' : '<span class="market-change positive">Normal</span>'}
+                    </div>
+                `;
+            }
+            return `
+                <div class="market-item ${item.simulated ? 'simulated' : ''}"
+                     data-symbol="${item.symbol || item.label}"
+                     onmouseenter="showMarketTooltip(event, '${item.label}')"
+                     onmouseleave="hideMarketTooltip()">
+                    <span class="market-label">${item.label}</span>
+                    <span class="market-value">${item.value}</span>
+                    <span class="market-change ${item.positive ? 'positive' : 'negative'}">${item.change}</span>
+                </div>
+            `;
+        }).join('')}
     `;
 }
 
@@ -772,6 +1023,71 @@ const INSTRUMENT_INFO = {
         relatedNews: ['markets'],
         keyLevels: { support: 38000, resistance: 40000 },
         tradingHours: '9:30 AM - 4:00 PM ET'
+    },
+    'Bitcoin': {
+        symbol: 'BTC-USD',
+        fullName: 'Bitcoin',
+        description: 'Largest cryptocurrency by market cap. Risk-on/liquidity indicator.',
+        category: 'Crypto',
+        interpretation: {
+            bullish: 'Risk-on sentiment, abundant liquidity, crypto adoption',
+            bearish: 'Risk-off, liquidity tightening, regulatory concerns'
+        },
+        relatedNews: ['markets', 'macro'],
+        keyLevels: { support: [80000, 70000, 60000], resistance: [100000, 110000, 120000] },
+        tradingHours: '24/7'
+    },
+    'DXY': {
+        symbol: 'DX-Y.NYB',
+        fullName: 'US Dollar Index (DXY)',
+        description: 'Dollar strength vs basket of 6 major currencies. Key macro indicator.',
+        category: 'FX',
+        interpretation: {
+            bullish: 'EM weakness, commodity pressure, dollar assets preferred',
+            bearish: 'Risk appetite, commodity tailwind, EM recovery'
+        },
+        relatedNews: ['commodities', 'macro', 'central-banks'],
+        keyLevels: { support: [100, 98, 95], resistance: [105, 108, 110] },
+        tradingHours: '24/5'
+    },
+    'Copper': {
+        symbol: 'HG=F',
+        fullName: 'Copper (Dr. Copper)',
+        description: 'Industrial metal barometer. Leading indicator of economic activity.',
+        category: 'Commodity',
+        interpretation: {
+            bullish: 'Economy expanding, industrial demand up, China recovery',
+            bearish: 'Recession signal, China slowdown, demand destruction'
+        },
+        relatedNews: ['commodities', 'macro'],
+        keyLevels: { support: [3.5, 3.0, 2.5], resistance: [4.5, 5.0, 5.5] },
+        tradingHours: '6:00 PM - 5:00 PM ET (Sun-Fri)'
+    },
+    '5Y Yield': {
+        symbol: '^FVX',
+        fullName: '5-Year Treasury Yield',
+        description: 'Mid-curve yield. Key for mortgage rates and Fed policy expectations.',
+        category: 'Fixed Income',
+        interpretation: {
+            bullish: 'Tighter conditions, hawkish Fed',
+            bearish: 'Easing expectations, flight to safety'
+        },
+        relatedNews: ['fixed-income', 'central-banks'],
+        keyLevels: { support: [3.5, 3.0, 2.5], resistance: [4.5, 5.0, 5.5] },
+        tradingHours: '24/5'
+    },
+    '2s10s': {
+        symbol: '2s10s',
+        fullName: '2s10s Yield Spread',
+        description: 'Difference between 10Y and short-term yields. Classic recession predictor.',
+        category: 'Fixed Income',
+        interpretation: {
+            bullish: 'Normal curve — expansion expected',
+            bearish: 'INVERTED — historically precedes recessions by 6-18 months'
+        },
+        relatedNews: ['fixed-income', 'macro', 'central-banks'],
+        keyLevels: { support: [-0.5, 0], resistance: [0.5, 1.0, 1.5] },
+        tradingHours: '24/5'
     }
 };
 
@@ -849,12 +1165,22 @@ function showMarketTooltip(event, label) {
         }
 
         // Build key levels HTML
-        const keyLevelsHtml = Object.entries(info.keyLevels).map(([key, value]) => `
-            <span class="key-level">
-                <span class="key-level-label">${key}:</span>
-                <span class="key-level-value">${typeof value === 'number' ? value.toLocaleString() : value}</span>
-            </span>
-        `).join('');
+        const keyLevelsHtml = Object.entries(info.keyLevels).map(([key, value]) => {
+            let displayValue;
+            if (Array.isArray(value)) {
+                displayValue = value.map(v => typeof v === 'number' ? v.toLocaleString() : v).join(', ');
+            } else if (typeof value === 'number') {
+                displayValue = value.toLocaleString();
+            } else {
+                displayValue = value;
+            }
+            return `
+                <span class="key-level">
+                    <span class="key-level-label">${key}:</span>
+                    <span class="key-level-value">${displayValue}</span>
+                </span>
+            `;
+        }).join('');
 
         tooltip.innerHTML = `
             <div class="tooltip-header">
@@ -1012,6 +1338,30 @@ const CATEGORY_INFO = {
             'Index concentration: Single stock risk',
             'Sector rotation: Economic cycle'
         ]
+    },
+    'academic': {
+        name: 'Academic Research',
+        icon: '📄',
+        description: 'Working papers, preprints, and peer-reviewed research in quantitative finance',
+        keyMetrics: ['arXiv q-fin', 'SSRN Downloads', 'NBER WPs', 'Citation Count'],
+        whyItMatters: 'Academic research is the ultimate source of new alpha ideas and risk models',
+        tradingImplications: [
+            'New anomalies: Test before trading',
+            'Methodology papers: Improve existing models',
+            'Factor papers: Challenge or confirm priors'
+        ]
+    },
+    'energy': {
+        name: 'Energy Markets',
+        icon: '⚡',
+        description: 'Oil, natural gas, LNG, renewables, and power market developments',
+        keyMetrics: ['EIA Inventories', 'OPEC+ Output', 'Henry Hub', 'Power Prices'],
+        whyItMatters: 'Energy drives inflation expectations and has distinct seasonality patterns',
+        tradingImplications: [
+            'Inventory surprise: Short-term price impact',
+            'OPEC+ decisions: Medium-term supply dynamics',
+            'Seasonal patterns: Natural gas, heating oil'
+        ]
     }
 };
 
@@ -1130,7 +1480,8 @@ async function fetchRSSFeed(sourceKey, sourceConfig) {
             source: sourceConfig.name,
             sourceKey: sourceKey,
             category: classifyCategory(item.title, item.description || ''),
-            fetchedAt: new Date().toISOString()
+            fetchedAt: new Date().toISOString(),
+            claimTags: tagClaim(item.title, item.description || '', sourceKey)
         }));
     } catch (error) {
         console.warn(`Failed to fetch ${sourceConfig.name}:`, error.message);
@@ -1340,6 +1691,16 @@ function createNewsCard(item, isPriority = false) {
     const isBreaking = item.priority >= 7 && (Date.now() - new Date(item.pubDate).getTime()) < 3600000;
     const breakingBadge = isBreaking ? '<span class="card-priority-badge breaking">Breaking</span>' : '';
 
+    // Claim tag badges
+    const claimBadges = (item.claimTags || []).map(tag => {
+        const badges = {
+            'data-driven': '<span class="claim-badge data">📊 Data</span>',
+            'institutional': '<span class="claim-badge institutional">🏛️ Official</span>',
+            'narrative': '<span class="claim-badge narrative">📝 Narrative</span>'
+        };
+        return badges[tag] || '';
+    }).join('');
+
     return `
         <article class="news-card ${priorityClass} ${categoryClass}" onclick="window.open('${escapeHtml(item.link)}', '_blank')">
             ${breakingBadge || priorityBadge}
@@ -1349,6 +1710,7 @@ function createNewsCard(item, isPriority = false) {
             </div>
             <h3 class="news-card-title">${escapeHtml(item.title)}</h3>
             <p class="news-card-excerpt">${escapeHtml(item.excerpt)}</p>
+            <div class="claim-badges">${claimBadges}</div>
             <div class="news-card-footer">
                 <span class="news-category ${item.category}" onmouseenter="showCategoryTooltip(event, '${item.category}')" onmouseleave="hideCategoryTooltip()">${item.category.replace('-', ' ')}</span>
                 <div class="news-priority">${priorityDots}</div>
@@ -1962,8 +2324,8 @@ function setupEventListeners() {
         if (e.key === 'r' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') {
             fetchAllNews();
         }
-        // 1-7 for category filters
-        if (e.key >= '1' && e.key <= '7' && document.activeElement.tagName !== 'INPUT') {
+        // 1-9 for category filters
+        if (e.key >= '1' && e.key <= '9' && document.activeElement.tagName !== 'INPUT') {
             const tabs = document.querySelectorAll('.category-tab');
             const idx = parseInt(e.key) - 1;
             if (tabs[idx]) {

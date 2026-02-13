@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economic Calendar | Quant Research Daily</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Calendar Page Container */
+        .calendar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        .calendar-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .calendar-page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        /* Navigation Bar */
+        .page-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .page-nav a {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+        }
+
+        .page-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .page-nav a.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* FOMC Countdown Banner */
+        .fomc-countdown {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xl);
+            padding: var(--spacing-xl);
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.1) 0%, rgba(163, 113, 247, 0.05) 50%, var(--bg-card) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fomc-countdown::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-purple), var(--accent-primary));
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .countdown-info {
+            text-align: center;
+        }
+
+        .countdown-event {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .countdown-date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        .countdown-timer {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+
+        .countdown-item {
+            text-align: center;
+        }
+
+        .countdown-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            color: var(--accent-primary);
+            line-height: 1;
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .countdown-separator {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            align-self: flex-start;
+            margin-top: 4px;
+            opacity: 0.5;
+        }
+
+        /* Next Events Strip */
+        .next-events-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .next-event-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            transition: all var(--transition-fast);
+        }
+
+        .next-event-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .next-event-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            flex-shrink: 0;
+        }
+
+        .next-event-icon.fomc { background: rgba(88, 166, 255, 0.15); }
+        .next-event-icon.nfp { background: rgba(63, 185, 80, 0.15); }
+        .next-event-icon.cpi { background: rgba(210, 153, 34, 0.15); }
+        .next-event-icon.opex { background: rgba(163, 113, 247, 0.15); }
+
+        .next-event-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .next-event-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .next-event-date {
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+        }
+
+        .next-event-countdown {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+
+        /* Main Calendar Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .calendar-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .calendar-section-header {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .calendar-section-body {
+            padding: var(--spacing-lg);
+        }
+
+        .calendar-section.full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Fed Speaker Cards */
+        .speaker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .speaker-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .speaker-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .speaker-card.hawk {
+            border-left: 3px solid var(--accent-red);
+        }
+
+        .speaker-card.dove {
+            border-left: 3px solid var(--accent-primary);
+        }
+
+        .speaker-card.neutral {
+            border-left: 3px solid var(--text-muted);
+        }
+
+        .speaker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .speaker-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .speaker-emoji {
+            font-size: 1rem;
+        }
+
+        .speaker-role {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .speaker-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        .speaker-stance {
+            display: inline-block;
+            font-size: 0.625rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .speaker-stance.hawk {
+            background: rgba(248, 81, 73, 0.15);
+            color: var(--accent-red);
+        }
+
+        .speaker-stance.dove {
+            background: rgba(88, 166, 255, 0.15);
+            color: var(--accent-primary);
+        }
+
+        .speaker-stance.neutral {
+            background: rgba(139, 148, 158, 0.15);
+            color: var(--text-muted);
+        }
+
+        .speaker-voter-badge {
+            font-size: 0.625rem;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--accent-green);
+        }
+
+        .speaker-weight-bar {
+            margin-top: 8px;
+            height: 4px;
+            background: var(--bg-primary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .speaker-weight-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .speaker-weight-fill.hawk { background: var(--accent-red); }
+        .speaker-weight-fill.dove { background: var(--accent-primary); }
+        .speaker-weight-fill.neutral { background: var(--text-muted); }
+
+        .speaker-weight-label {
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            text-align: right;
+        }
+
+        /* OpEx Calendar */
+        .opex-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: var(--spacing-sm);
+        }
+
+        .opex-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+            text-align: center;
+            font-size: 0.8125rem;
+            transition: all var(--transition-fast);
+        }
+
+        .opex-item:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .opex-item.quad-witching {
+            border-color: var(--accent-purple);
+            background: rgba(163, 113, 247, 0.1);
+        }
+
+        .opex-item.past {
+            opacity: 0.4;
+        }
+
+        .opex-item.next-upcoming {
+            border-color: var(--accent-green);
+            background: rgba(63, 185, 80, 0.08);
+            box-shadow: 0 0 12px rgba(63, 185, 80, 0.1);
+        }
+
+        .opex-month {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .opex-date {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .opex-label {
+            font-size: 0.625rem;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .opex-label.quad {
+            color: var(--accent-purple);
+        }
+
+        .opex-label.next {
+            color: var(--accent-green);
+        }
+
+        .opex-days-until {
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            margin-top: 2px;
+        }
+
+        /* TradingView Embed */
+        .tradingview-embed {
+            width: 100%;
+            min-height: 500px;
+            border: none;
+            border-radius: var(--radius-md);
+        }
+
+        /* Legend */
+        .calendar-legend {
+            display: flex;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.hawk { background: var(--accent-red); }
+        .legend-dot.dove { background: var(--accent-primary); }
+        .legend-dot.neutral-dot { background: var(--text-muted); }
+        .legend-dot.quad { background: var(--accent-purple); }
+        .legend-dot.next { background: var(--accent-green); }
+
+        /* Footer */
+        .calendar-footer {
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .calendar-footer p {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .calendar-footer .disclaimer {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .calendar-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .fomc-countdown {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+
+            .countdown-timer {
+                gap: var(--spacing-md);
+            }
+
+            .countdown-value {
+                font-size: 1.75rem;
+            }
+
+            .countdown-separator {
+                font-size: 1.5rem;
+            }
+
+            .next-events-strip {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-nav {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                gap: var(--spacing-xs);
+            }
+
+            .page-nav a {
+                font-size: 0.75rem;
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+
+            .next-events-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .speaker-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .opex-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="display: block;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                        <h1 class="logo">QRD</h1>
+                        <span class="logo-text">Quant Research Daily</span>
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <span class="calendar-subtitle" style="font-size: 0.875rem; color: var(--text-secondary);">Economic Calendar</span>
+                    <a href="index.html" class="btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back to News
+                    </a>
+                    <a href="dashboard.html" class="btn" style="background: var(--accent-purple); border-color: var(--accent-purple);">Dashboard</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Bar -->
+        <nav class="page-nav">
+            <a href="index.html">News</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="archive.html">Archive</a>
+            <a href="research-ideas.html">Research Ideas</a>
+            <a href="calendar.html" class="active">Calendar</a>
+            <a href="cot.html">COT</a>
+            <a href="papers.html">Papers</a>
+            <a href="correlations.html">Correlations</a>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="calendar-container">
+            <!-- Page Header -->
+            <div class="calendar-page-header">
+                <h2 class="calendar-page-title">&#x1F4C5; Economic Calendar &amp; Fed Schedule</h2>
+            </div>
+
+            <!-- FOMC Countdown Banner -->
+            <div class="fomc-countdown" id="fomcCountdown">
+                <div class="countdown-info">
+                    <div class="countdown-event">Next FOMC Meeting</div>
+                    <div class="countdown-date" id="fomcDate">Loading...</div>
+                </div>
+                <div class="countdown-timer">
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="countDays">--</div>
+                        <div class="countdown-label">Days</div>
+                    </div>
+                    <div class="countdown-separator">:</div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="countHours">--</div>
+                        <div class="countdown-label">Hours</div>
+                    </div>
+                    <div class="countdown-separator">:</div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="countMinutes">--</div>
+                        <div class="countdown-label">Minutes</div>
+                    </div>
+                    <div class="countdown-separator">:</div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="countSeconds">--</div>
+                        <div class="countdown-label">Seconds</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Events Strip -->
+            <div class="next-events-strip" id="nextEventsStrip">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Legend -->
+            <div class="calendar-legend">
+                <div class="legend-item">
+                    <span class="legend-dot hawk"></span> Hawk
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot dove"></span> Dove
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot neutral-dot"></span> Neutral
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot quad"></span> Quad Witching
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot next"></span> Next Upcoming
+                </div>
+            </div>
+
+            <!-- Calendar Grid -->
+            <div class="calendar-grid">
+                <!-- TradingView Economic Calendar (Full Width) -->
+                <div class="calendar-section full-width">
+                    <div class="calendar-section-header">&#x1F4CA; Economic Calendar</div>
+                    <div class="calendar-section-body" id="tvCalendarContainer">
+                        <div id="tvCalendarWidget"></div>
+                    </div>
+                </div>
+
+                <!-- Fed Speakers -->
+                <div class="calendar-section">
+                    <div class="calendar-section-header">&#x1F3DB;&#xFE0F; FOMC Members</div>
+                    <div class="calendar-section-body">
+                        <div class="speaker-grid" id="speakerGrid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OpEx Calendar -->
+                <div class="calendar-section">
+                    <div class="calendar-section-header">&#x1F4C6; Options Expiration Calendar 2026</div>
+                    <div class="calendar-section-body">
+                        <div class="opex-grid" id="opexGrid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="calendar-footer">
+            <p>Quant Research Daily - Curated financial news for quantitative researchers</p>
+            <p class="disclaimer">Data aggregated from public RSS feeds and APIs. FOMC dates from federalreserve.gov. Not financial advice.</p>
+        </footer>
+    </div>
+
+    <script src="calendar.js"></script>
+</body>
+</html>

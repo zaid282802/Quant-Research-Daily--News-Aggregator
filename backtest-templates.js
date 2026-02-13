@@ -901,10 +901,198 @@ if __name__ == '__main__':
     results.to_csv('factor_strategy_results.csv')
     print("\\nResults saved to: factor_strategy_results.csv")
 `
+    },
+
+    cot: {
+        name: 'COT Positioning Signal',
+        description: 'Contrarian strategy based on CFTC speculator positioning extremes',
+        project: null,
+        projectPath: null,
+        dependencies: ['pandas', 'numpy', 'yfinance', 'requests', 'scipy'],
+        generate: (config) => `"""
+${config.title}
+================================================================================
+Generated from research idea on ${new Date().toISOString().split('T')[0]}
+Template: COT Positioning Signal (Contrarian)
+
+Data Source: CFTC Commitment of Traders + ${config.dataSource}
+Date Range: ${config.startDate} to ${config.endDate}
+
+Original Article: ${config.link || 'N/A'}
+================================================================================
+"""
+
+import pandas as pd
+import numpy as np
+import requests
+from scipy import stats as sp_stats
+import warnings
+warnings.filterwarnings('ignore')
+
+# =====================================================
+# Configuration
+# =====================================================
+
+CONFIG = {
+    'start_date': '${config.startDate}',
+    'end_date': '${config.endDate}',
+    'initial_capital': 100000,
+    'transaction_cost_bps': 10,
+    'z_score_lookback': 52,
+    'entry_threshold': 2.0,
+    'exit_threshold': 0.5,
+}
+
+COT_API = "https://publicreporting.cftc.gov/resource/6dca-aqww.json"
+
+COT_CONTRACTS = {
+    'ES': {'code': '13874A', 'name': 'E-Mini S&P 500', 'ticker': 'SPY'},
+    'TY': {'code': '043602', 'name': '10-Year T-Note', 'ticker': 'TLT'},
+    'GC': {'code': '088691', 'name': 'Gold', 'ticker': 'GLD'},
+    'CL': {'code': '067651', 'name': 'Crude Oil WTI', 'ticker': 'USO'},
+    'NG': {'code': '023651', 'name': 'Natural Gas', 'ticker': 'UNG'},
+    'EC': {'code': '099741', 'name': 'Euro FX', 'ticker': 'FXE'},
+}
+
+
+# =====================================================
+# Data Fetching
+# =====================================================
+
+def fetch_cot_data(contract_code, weeks=260):
+    """Fetch COT data from CFTC Socrata API."""
+    url = f"{COT_API}?$where=cftc_contract_market_code='{contract_code}'&$order=report_date_as_yyyy_mm_dd DESC&$limit={weeks}"
+    try:
+        resp = requests.get(url, timeout=30)
+        resp.raise_for_status()
+        df = pd.DataFrame(resp.json())
+        df['date'] = pd.to_datetime(df['report_date_as_yyyy_mm_dd'])
+        df = df.sort_values('date').set_index('date')
+        df['net_spec'] = df['noncomm_positions_long_all'].astype(float) - df['noncomm_positions_short_all'].astype(float)
+        df['open_interest'] = df['open_interest_all'].astype(float)
+        df['net_pct_oi'] = df['net_spec'] / df['open_interest']
+        return df[['net_spec', 'open_interest', 'net_pct_oi']]
+    except Exception as e:
+        print(f"  CFTC API error: {e}. Using synthetic data.")
+        dates = pd.date_range(end=pd.Timestamp.today(), periods=weeks, freq='W-TUE')
+        np.random.seed(42)
+        ns = np.cumsum(np.random.randn(weeks) * 5000)
+        oi = np.abs(ns) * 3 + 100000
+        return pd.DataFrame({'net_spec': ns, 'open_interest': oi, 'net_pct_oi': ns/oi}, index=dates)
+
+
+# =====================================================
+# Signal Generation
+# =====================================================
+
+def generate_signals(cot_data, lookback=52):
+    """Contrarian signals at positioning extremes."""
+    s = pd.DataFrame(index=cot_data.index)
+    s['net_pct_oi'] = cot_data['net_pct_oi']
+    mu = s['net_pct_oi'].rolling(lookback).mean()
+    sigma = s['net_pct_oi'].rolling(lookback).std()
+    s['z'] = (s['net_pct_oi'] - mu) / sigma
+    s['signal'] = 0
+    s.loc[s['z'] > CONFIG['entry_threshold'], 'signal'] = -1
+    s.loc[s['z'] < -CONFIG['entry_threshold'], 'signal'] = 1
+    s.loc[s['z'].abs() < CONFIG['exit_threshold'], 'signal'] = 0
+    s['position'] = s['signal'].replace(0, np.nan).ffill().fillna(0)
+    return s
+
+
+# =====================================================
+# Backtest + Prove-It Validation
+# =====================================================
+
+def run_backtest(signals, prices):
+    daily = signals['position'].reindex(prices.index, method='ffill').fillna(0)
+    ret = prices.pct_change()
+    strat = daily.shift(1) * ret
+    costs = daily.diff().abs() * (CONFIG['transaction_cost_bps'] / 10000)
+    return (strat - costs).dropna()
+
+
+def validate_results(returns):
+    """Harvey-Liu-Zhu (2016) statistical validation."""
+    n = len(returns)
+    mu, sigma = returns.mean(), returns.std()
+    t_stat = (mu / sigma) * np.sqrt(n) if sigma > 0 else 0
+    p_val = 2 * (1 - sp_stats.t.cdf(abs(t_stat), n - 1))
+    sharpe = (mu / sigma) * np.sqrt(252) if sigma > 0 else 0
+    cum = (1 + returns).cumprod()
+    max_dd = ((cum - cum.cummax()) / cum.cummax()).min()
+    wr = (returns > 0).sum() / n
+
+    print(f"\\n{'='*50}")
+    print(f"PROVE-IT VALIDATION (Harvey-Liu-Zhu)")
+    print(f"{'='*50}")
+    print(f"  Sharpe:      {sharpe:.3f}")
+    print(f"  t-stat:      {t_stat:.3f}")
+    print(f"  p-value:     {p_val:.4f}")
+    print(f"  Max DD:      {max_dd:.2%}")
+    print(f"  Win Rate:    {wr:.2%}")
+    if t_stat >= 3.0: print("  ✅ PASSES HLZ threshold (t > 3.0)")
+    elif t_stat >= 2.0: print("  ⚠️  MARGINAL (2.0 < t < 3.0)")
+    else: print("  ❌ FAILS (t < 2.0)")
+    return {'sharpe': sharpe, 't_stat': t_stat, 'p_value': p_val, 'max_dd': max_dd}
+
+
+# =====================================================
+# Main
+# =====================================================
+
+if __name__ == '__main__':
+    import yfinance as yf
+    contract = 'ES'
+    info = COT_CONTRACTS[contract]
+    print(f"COT BACKTEST: {info['name']}")
+
+    cot = fetch_cot_data(info['code'])
+    prices = yf.download(info['ticker'], start=CONFIG['start_date'], end=CONFIG['end_date'])['Adj Close']
+    signals = generate_signals(cot, CONFIG['z_score_lookback'])
+
+    # Walk-forward split
+    split = int(len(prices) * 0.7)
+    print(f"IS: {prices.index[0].date()} - {prices.index[split].date()}")
+    print(f"OOS: {prices.index[split].date()} - {prices.index[-1].date()}")
+
+    print("\\n--- IN-SAMPLE ---")
+    validate_results(run_backtest(signals, prices.iloc[:split]))
+    print("\\n--- OUT-OF-SAMPLE ---")
+    validate_results(run_backtest(signals, prices.iloc[split:]))
+`
     }
 };
+
+// Prove-It validation snippet - append to any template output for statistical validation
+const PROVE_IT_VALIDATION = `
+# === PROVE-IT STATISTICAL VALIDATION (Harvey-Liu-Zhu 2016) ===
+def validate_results(returns):
+    from scipy import stats as sp_stats
+    import numpy as np
+    n = len(returns)
+    mu, sigma = returns.mean(), returns.std()
+    t_stat = (mu / sigma) * np.sqrt(n) if sigma > 0 else 0
+    p_val = 2 * (1 - sp_stats.t.cdf(abs(t_stat), n - 1))
+    sharpe = (mu / sigma) * np.sqrt(252) if sigma > 0 else 0
+    cum = (1 + returns).cumprod()
+    max_dd = ((cum - cum.cummax()) / cum.cummax()).min()
+    print(f"Sharpe: {sharpe:.3f} | t-stat: {t_stat:.3f} | p: {p_val:.4f} | MaxDD: {max_dd:.2%}")
+    if t_stat >= 3.0: print("PASSES HLZ threshold")
+    elif t_stat >= 2.0: print("MARGINAL - multiple testing risk")
+    else: print("FAILS - likely noise")
+    return {'sharpe': sharpe, 't_stat': t_stat, 'p_value': p_val, 'max_dd': max_dd}
+
+# Walk-forward split
+TRAIN_RATIO = 0.7
+split_idx = int(len(data) * TRAIN_RATIO)
+train_data, test_data = data[:split_idx], data[split_idx:]
+print(f"IS: {train_data.index[0]} to {train_data.index[-1]}")
+print(f"OOS: {test_data.index[0]} to {test_data.index[-1]}")
+`;
 
 // Export for use
 if (typeof window !== 'undefined') {
     window.BACKTEST_TEMPLATES = BACKTEST_TEMPLATES;
+    window.PROVE_IT_VALIDATION = PROVE_IT_VALIDATION;
 }

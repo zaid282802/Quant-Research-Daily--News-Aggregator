@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Papers | Quant Research Daily</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* =====================================================
+           Academic Papers Page Styles
+           ===================================================== */
+
+        /* Page Navigation */
+        .page-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--bg-tertiary) transparent;
+        }
+
+        .page-nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .page-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .page-nav::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+        }
+
+        .page-nav a {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+        }
+
+        .page-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .page-nav a.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* Papers Container */
+        .papers-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        /* Papers Header */
+        .papers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .papers-title-section {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .papers-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .papers-title-icon {
+            width: 28px;
+            height: 28px;
+            color: var(--cat-academic);
+        }
+
+        .papers-subtitle {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .papers-header-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: center;
+        }
+
+        .btn-refresh-papers {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: var(--font-primary);
+        }
+
+        .btn-refresh-papers:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-refresh-papers svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .btn-refresh-papers.loading svg {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Search & Filter Bar */
+        .search-filter-bar {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .search-input-wrapper svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: var(--font-primary);
+            transition: all var(--transition-fast);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .filter-select {
+            padding: 10px 32px 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 0.8125rem;
+            font-family: var(--font-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .filter-select:hover {
+            border-color: var(--text-muted);
+        }
+
+        .filter-date-input {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 0.8125rem;
+            font-family: var(--font-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .filter-date-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .filter-date-input::-webkit-calendar-picker-indicator {
+            filter: invert(0.7);
+            cursor: pointer;
+        }
+
+        .watched-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: var(--font-primary);
+            white-space: nowrap;
+        }
+
+        .watched-toggle:hover {
+            border-color: var(--accent-yellow);
+            color: var(--accent-yellow);
+        }
+
+        .watched-toggle.active {
+            background: rgba(210, 153, 34, 0.15);
+            border-color: var(--accent-yellow);
+            color: var(--accent-yellow);
+        }
+
+        .watched-toggle svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Stats Bar */
+        .papers-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .paper-stat {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md) var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            transition: all var(--transition-fast);
+        }
+
+        .paper-stat:hover {
+            border-color: var(--border-light);
+            transform: translateY(-1px);
+        }
+
+        .paper-stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .paper-stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .paper-stat-icon.total {
+            background: rgba(88, 166, 255, 0.12);
+            color: var(--accent-primary);
+        }
+
+        .paper-stat-icon.watched {
+            background: rgba(210, 153, 34, 0.12);
+            color: var(--accent-yellow);
+        }
+
+        .paper-stat-icon.saved {
+            background: rgba(63, 185, 80, 0.12);
+            color: var(--accent-green);
+        }
+
+        .paper-stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .paper-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            line-height: 1.2;
+        }
+
+        .paper-stat-label {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        /* Subcategory Filter Chips */
+        .filter-chips {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 6px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: var(--font-primary);
+            white-space: nowrap;
+        }
+
+        .filter-chip:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .filter-chip.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        /* Papers Grid */
+        .papers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        @media (max-width: 860px) {
+            .papers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Paper Card */
+        .paper-card {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .paper-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .paper-card.watched-author {
+            border-left: 4px solid #d29922;
+        }
+
+        .paper-card.watched-author:hover {
+            border-left-color: #d29922;
+        }
+
+        .paper-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .paper-subcategory {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            flex-shrink: 0;
+        }
+
+        /* Subcategory Colors */
+        .subcat-sf { background: rgba(163, 113, 247, 0.15); color: #a371f7; border: 1px solid rgba(163, 113, 247, 0.3); }
+        .subcat-cp { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.3); }
+        .subcat-rm { background: rgba(210, 153, 34, 0.15); color: #d29922; border: 1px solid rgba(210, 153, 34, 0.3); }
+        .subcat-tr { background: rgba(248, 81, 73, 0.15); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); }
+        .subcat-pm { background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); }
+        .subcat-mf { background: rgba(219, 109, 40, 0.15); color: #db6d28; border: 1px solid rgba(219, 109, 40, 0.3); }
+        .subcat-ml { background: rgba(230, 168, 215, 0.15); color: #e6a8d7; border: 1px solid rgba(230, 168, 215, 0.3); }
+        .subcat-gn { background: rgba(121, 192, 255, 0.15); color: #79c0ff; border: 1px solid rgba(121, 192, 255, 0.3); }
+
+        .watched-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.625rem;
+            font-weight: 600;
+            background: rgba(210, 153, 34, 0.15);
+            color: var(--accent-yellow);
+            border: 1px solid rgba(210, 153, 34, 0.3);
+            white-space: nowrap;
+        }
+
+        .watched-badge svg {
+            width: 10px;
+            height: 10px;
+        }
+
+        .paper-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-bottom: var(--spacing-sm);
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        .paper-title:hover {
+            color: var(--accent-primary);
+        }
+
+        .paper-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .paper-title a:hover {
+            color: var(--accent-primary);
+        }
+
+        .paper-authors {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.5;
+        }
+
+        .paper-authors .author-watched {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .paper-abstract {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: var(--spacing-md);
+            flex-grow: 1;
+        }
+
+        .paper-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid var(--border-light);
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        .paper-date {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .paper-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+
+        .paper-btn {
+            padding: 5px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 0.6875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: var(--font-primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .paper-btn svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .paper-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .paper-btn.save-btn:hover {
+            background: rgba(63, 185, 80, 0.15);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .paper-btn.save-btn.saved {
+            background: rgba(63, 185, 80, 0.15);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .paper-btn.backtest-btn:hover {
+            background: rgba(163, 113, 247, 0.15);
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+        }
+
+        /* Loading State */
+        .loading-papers {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: var(--spacing-2xl) var(--spacing-lg);
+            color: var(--text-muted);
+        }
+
+        .loading-spinner-papers {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--spacing-md);
+        }
+
+        .loading-papers p {
+            font-size: 0.875rem;
+        }
+
+        /* Empty State */
+        .empty-papers {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: var(--spacing-2xl) var(--spacing-lg);
+            color: var(--text-muted);
+        }
+
+        .empty-papers svg {
+            width: 48px;
+            height: 48px;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-md);
+            opacity: 0.5;
+        }
+
+        .empty-papers h3 {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .empty-papers p {
+            font-size: 0.8125rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Backtest Modal */
+        .backtest-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+        }
+
+        .backtest-modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .backtest-modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 520px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            transition: transform var(--transition-normal);
+        }
+
+        .backtest-modal-overlay.visible .backtest-modal {
+            transform: translateY(0);
+        }
+
+        .backtest-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .backtest-modal-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .backtest-modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .backtest-modal-close:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .backtest-modal-close svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .backtest-modal-body {
+            padding: var(--spacing-lg);
+        }
+
+        .backtest-info {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .backtest-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-xs) 0;
+            font-size: 0.8125rem;
+        }
+
+        .backtest-info-row .label {
+            color: var(--text-muted);
+        }
+
+        .backtest-info-row .value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .backtest-modal-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .backtest-modal-actions .btn-action {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: var(--font-primary);
+            text-align: center;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-action.primary {
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+            color: white;
+        }
+
+        .btn-action.primary:hover {
+            background: #b585fa;
+        }
+
+        .btn-action.secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-action.secondary:hover {
+            border-color: var(--accent-primary);
+        }
+
+        /* Toast Notification */
+        .papers-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 10px 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1100;
+            font-size: 0.875rem;
+            font-family: var(--font-primary);
+            opacity: 0;
+            transition: all 300ms ease;
+            white-space: nowrap;
+        }
+
+        .papers-toast.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .papers-toast.success {
+            border-color: var(--accent-green);
+        }
+
+        .papers-toast.info {
+            border-color: var(--accent-primary);
+        }
+
+        .papers-toast.warning {
+            border-color: var(--accent-yellow);
+        }
+
+        /* Footer */
+        .papers-footer {
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+            margin-top: var(--spacing-2xl);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .papers-footer a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        .papers-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .papers-footer .disclaimer {
+            margin-top: var(--spacing-xs);
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            .papers-container {
+                padding: var(--spacing-md);
+            }
+
+            .papers-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-filter-bar {
+                flex-direction: column;
+            }
+
+            .search-input-wrapper {
+                min-width: 100%;
+            }
+
+            .papers-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .papers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .paper-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="display: block;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                        <h1 class="logo">QRD</h1>
+                        <span class="logo-text">Academic Papers</span>
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <a href="index.html" class="btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        News Feed
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Navigation -->
+        <nav class="page-nav">
+            <a href="index.html">News</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="archive.html">Archive</a>
+            <a href="research-ideas.html">Research Ideas</a>
+            <a href="calendar.html">Calendar</a>
+            <a href="cot.html">COT</a>
+            <a href="papers.html" class="active">Papers</a>
+            <a href="correlations.html">Correlations</a>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="papers-container">
+
+            <!-- Page Header -->
+            <div class="papers-header">
+                <div class="papers-title-section">
+                    <div>
+                        <h2 class="papers-title">
+                            <svg class="papers-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                                <path d="M8 7h6M8 11h8"/>
+                            </svg>
+                            Academic Paper Tracker
+                        </h2>
+                        <p class="papers-subtitle">arXiv q-fin papers -- auto-fetched daily</p>
+                    </div>
+                </div>
+                <div class="papers-header-actions">
+                    <button class="btn-refresh-papers" id="refreshBtn" onclick="fetchAllPapers()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="papers-stats" id="paperStats">
+                <div class="paper-stat">
+                    <div class="paper-stat-icon total">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <div class="paper-stat-info">
+                        <span class="paper-stat-value" id="totalPapersCount">--</span>
+                        <span class="paper-stat-label">Total Papers</span>
+                    </div>
+                </div>
+                <div class="paper-stat">
+                    <div class="paper-stat-icon watched">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="paper-stat-info">
+                        <span class="paper-stat-value" id="watchedPapersCount">--</span>
+                        <span class="paper-stat-label">Watched Author Papers</span>
+                    </div>
+                </div>
+                <div class="paper-stat">
+                    <div class="paper-stat-icon saved">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <div class="paper-stat-info">
+                        <span class="paper-stat-value" id="savedIdeasCount">--</span>
+                        <span class="paper-stat-label">Saved to Ideas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search & Filter Bar -->
+            <div class="search-filter-bar">
+                <div class="search-input-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" class="search-input" id="paperSearch" placeholder="Search by title, author, or abstract...">
+                </div>
+                <select class="filter-select" id="subcategoryFilter">
+                    <option value="all">All Subcategories</option>
+                    <option value="q-fin.ST">Statistical Finance</option>
+                    <option value="q-fin.CP">Computational Finance</option>
+                    <option value="q-fin.RM">Risk Management</option>
+                    <option value="q-fin.TR">Trading & Microstructure</option>
+                    <option value="q-fin.PM">Portfolio Management</option>
+                    <option value="q-fin.MF">Mathematical Finance</option>
+                    <option value="stat.ML">Machine Learning</option>
+                </select>
+                <input type="date" class="filter-date-input" id="dateFilter" title="Filter by date">
+                <button class="watched-toggle" id="watchedToggle" title="Show only papers by watched authors">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Watched Only
+                </button>
+            </div>
+
+            <!-- Subcategory Filter Chips -->
+            <div class="filter-chips" id="filterChips">
+                <button class="filter-chip active" data-filter="all">All</button>
+                <button class="filter-chip" data-filter="q-fin.ST">Stat Finance</button>
+                <button class="filter-chip" data-filter="q-fin.CP">Comp Finance</button>
+                <button class="filter-chip" data-filter="q-fin.RM">Risk Mgmt</button>
+                <button class="filter-chip" data-filter="q-fin.TR">Trading</button>
+                <button class="filter-chip" data-filter="q-fin.PM">Portfolio Mgmt</button>
+                <button class="filter-chip" data-filter="q-fin.MF">Math Finance</button>
+                <button class="filter-chip" data-filter="stat.ML">Machine Learning</button>
+            </div>
+
+            <!-- Papers Grid -->
+            <div class="papers-grid" id="papersGrid">
+                <div class="loading-papers">
+                    <div class="loading-spinner-papers"></div>
+                    <p>Fetching papers from arXiv...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backtest Modal -->
+        <div class="backtest-modal-overlay" id="backtestModal">
+            <div class="backtest-modal">
+                <div class="backtest-modal-header">
+                    <h3>Generate Backtest</h3>
+                    <button class="backtest-modal-close" onclick="closeBacktestModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="backtest-modal-body" id="backtestModalBody">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="backtest-modal-actions">
+                    <a href="research-ideas.html" class="btn-action secondary">
+                        Open Research Ideas
+                    </a>
+                    <button class="btn-action primary" id="backtestSaveBtn" onclick="saveBacktestToIdeas()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Save & Generate
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="papers-toast" id="papersToast"></div>
+
+        <!-- Footer -->
+        <footer class="papers-footer">
+            <p>Quant Research Daily - Academic Paper Tracker | Data sourced from <a href="https://arxiv.org/list/q-fin/recent" target="_blank" rel="noopener">arXiv q-fin</a></p>
+            <p class="disclaimer">Papers are fetched via RSS. Not all papers may be classified correctly. Not financial advice.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="backtest-templates.js"></script>
+    <script src="papers.js"></script>
+</body>
+</html>

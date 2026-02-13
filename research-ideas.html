@@ -580,6 +580,309 @@
                 opacity: 1;
             }
         }
+
+        /* ========== Prove-It System Styles ========== */
+
+        /* Research Scorecard */
+        .research-scorecard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: #12121a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-lg);
+        }
+
+        .scorecard-item {
+            text-align: center;
+        }
+
+        .scorecard-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            color: var(--accent-primary);
+        }
+
+        .scorecard-value.green { color: #4caf50; }
+        .scorecard-value.yellow { color: #ff9800; }
+        .scorecard-value.red { color: #f44336; }
+
+        .scorecard-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* Sort Controls */
+        .sort-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+
+        .sort-controls label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .sort-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .sort-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .sort-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        /* Prove-It Badge */
+        .prove-it-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .prove-it-badge.proven {
+            background: rgba(76, 175, 80, 0.18);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.35);
+        }
+
+        .prove-it-badge.marginal {
+            background: rgba(255, 152, 0, 0.18);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.35);
+        }
+
+        .prove-it-badge.unproven {
+            background: rgba(244, 67, 54, 0.18);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.35);
+        }
+
+        .hlz-warning {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.625rem;
+            font-weight: 600;
+            background: rgba(255, 152, 0, 0.12);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.25);
+            margin-left: 6px;
+        }
+
+        .idea-card-badges {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* Hypothesis & metadata display on card */
+        .idea-hypothesis {
+            margin-top: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: rgba(163, 113, 247, 0.06);
+            border-left: 3px solid var(--accent-purple);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .idea-meta-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+
+        .idea-meta-tag {
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.6875rem;
+            font-weight: 500;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Backtest Results Collapsible */
+        .backtest-section {
+            margin-top: var(--spacing-md);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: #12121a;
+        }
+
+        .backtest-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .backtest-toggle:hover {
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.03);
+        }
+
+        .backtest-toggle .chevron {
+            transition: transform 0.2s ease;
+            font-size: 0.75rem;
+        }
+
+        .backtest-toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .backtest-body {
+            display: none;
+            padding: var(--spacing-md);
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .backtest-body.open {
+            display: block;
+        }
+
+        .backtest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--spacing-sm);
+        }
+
+        .backtest-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .backtest-field label {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        .backtest-field input {
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 0.8125rem;
+            font-family: var(--font-mono);
+        }
+
+        .backtest-field input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+
+        .backtest-save-btn {
+            margin-top: var(--spacing-sm);
+            padding: 8px 16px;
+            background: var(--accent-purple);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .backtest-save-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* Save Idea Modal enhancements */
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: var(--font-primary);
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+
+        .form-group .required-star {
+            color: #f44336;
+            margin-left: 2px;
+        }
+
+        .form-group .field-hint {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .validation-error {
+            color: #f44336;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .validation-error.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -600,6 +903,11 @@
                         </svg>
                         Back to News
                     </a>
+                    <a href="dashboard.html" class="btn" style="background: var(--accent-purple); border-color: var(--accent-purple);">Dashboard</a>
+                    <a href="calendar.html" class="btn" style="background: var(--accent-green); border-color: var(--accent-green);">Calendar</a>
+                    <a href="cot.html" class="btn" style="background: var(--accent-blue); border-color: var(--accent-blue);">COT</a>
+                    <a href="papers.html" class="btn" style="background: var(--cat-academic); border-color: var(--cat-academic); color: #000;">Papers</a>
+                    <a href="correlations.html" class="btn" style="background: var(--accent-orange); border-color: var(--accent-orange);">Correlations</a>
                 </div>
             </div>
         </header>
@@ -610,6 +918,7 @@
                 <h2 class="ideas-title">💡 Research Ideas</h2>
                 <div class="ideas-controls">
                     <input type="text" class="search-box" id="searchBox" placeholder="Search ideas...">
+                    <button class="btn" style="background: var(--accent-green); border-color: var(--accent-green); color: #fff;" onclick="openSaveIdeaModal()">+ New Idea</button>
                     <button class="btn" onclick="exportIdeas('json')">Export JSON</button>
                     <button class="btn" onclick="exportIdeas('csv')">Export CSV</button>
                 </div>
@@ -635,6 +944,30 @@
                 </div>
             </div>
 
+            <!-- Research Scorecard (Prove-It Summary) -->
+            <div class="research-scorecard" id="researchScorecard">
+                <div class="scorecard-item">
+                    <div class="scorecard-value" id="scTotal">0</div>
+                    <div class="scorecard-label">Total Ideas</div>
+                </div>
+                <div class="scorecard-item">
+                    <div class="scorecard-value" id="scTested">0</div>
+                    <div class="scorecard-label">Tested (0%)</div>
+                </div>
+                <div class="scorecard-item">
+                    <div class="scorecard-value green" id="scPassing">0</div>
+                    <div class="scorecard-label">Passing (Green)</div>
+                </div>
+                <div class="scorecard-item">
+                    <div class="scorecard-value" id="scSuccessRate">0%</div>
+                    <div class="scorecard-label">Success Rate</div>
+                </div>
+                <div class="scorecard-item">
+                    <div class="scorecard-value" id="scAvgSharpe">--</div>
+                    <div class="scorecard-label">Avg Sharpe (Passing)</div>
+                </div>
+            </div>
+
             <!-- Filter Tabs -->
             <div class="filter-tabs">
                 <button class="filter-tab active" data-filter="all">All</button>
@@ -642,6 +975,15 @@
                 <button class="filter-tab" data-filter="in-progress">In Progress</button>
                 <button class="filter-tab" data-filter="completed">Completed</button>
                 <button class="filter-tab" data-filter="archived">Archived</button>
+            </div>
+
+            <!-- Sort Controls -->
+            <div class="sort-controls">
+                <label>Sort by:</label>
+                <button class="sort-btn active" data-sort="date" onclick="setSortOrder('date')">Date Created</button>
+                <button class="sort-btn" data-sort="status" onclick="setSortOrder('status')">Status</button>
+                <button class="sort-btn" data-sort="badge" onclick="setSortOrder('badge')">Prove-It Badge</button>
+                <button class="sort-btn" data-sort="effect" onclick="setSortOrder('effect')">Effect Size</button>
             </div>
 
             <!-- Ideas List -->
@@ -673,8 +1015,112 @@
         const STORAGE_KEY = 'qrd_research_ideas';
         let ideas = [];
         let currentFilter = 'all';
+        let currentSort = 'date';
 
-        // Load ideas
+        // ========== Prove-It Badge Logic ==========
+
+        function computeProveItBadge(idea) {
+            const bt = idea.backtest_results;
+            if (!bt || bt.tStat === undefined || bt.tStat === null || bt.tStat === '') {
+                return { level: 'unproven', label: 'UNPROVEN', emoji: '\uD83D\uDD34', cssClass: 'unproven' };
+            }
+
+            const tStat = parseFloat(bt.tStat);
+            const sharpe = bt.sharpe !== undefined && bt.sharpe !== '' ? parseFloat(bt.sharpe) : null;
+            const hasOOS = bt.oosPeriod && bt.oosPeriod.trim() !== '';
+
+            // GREEN: t-stat > 3.0 AND has OOS AND Sharpe > 0.5
+            if (tStat > 3.0 && hasOOS && sharpe !== null && sharpe > 0.5) {
+                return { level: 'proven', label: 'PROVEN', emoji: '\uD83D\uDFE2', cssClass: 'proven' };
+            }
+
+            // YELLOW: 2.0 < t-stat < 3.0 OR missing OOS OR marginal Sharpe (0 < Sharpe <= 0.5)
+            if ((tStat > 2.0 && tStat <= 3.0) || !hasOOS || (sharpe !== null && sharpe > 0 && sharpe <= 0.5)) {
+                // But only if t-stat >= 2.0 (otherwise RED)
+                if (tStat >= 2.0) {
+                    return { level: 'marginal', label: 'MARGINAL', emoji: '\uD83D\uDFE1', cssClass: 'marginal' };
+                }
+            }
+
+            // RED: t-stat < 2.0 or fallback
+            return { level: 'unproven', label: 'UNPROVEN', emoji: '\uD83D\uDD34', cssClass: 'unproven' };
+        }
+
+        function hasHLZWarning(idea) {
+            const bt = idea.backtest_results;
+            if (!bt || bt.tStat === undefined || bt.tStat === null || bt.tStat === '') return false;
+            return parseFloat(bt.tStat) < 3.0;
+        }
+
+        // ========== Sorting ==========
+
+        const STATUS_ORDER = { 'new': 0, 'in-progress': 1, 'completed': 2, 'archived': 3 };
+        const BADGE_ORDER = { 'proven': 0, 'marginal': 1, 'unproven': 2 };
+        const EFFECT_ORDER = { '300bp+': 0, '100-300bp': 1, '50-100bp': 2, '<50bp': 3, '': 4 };
+
+        function setSortOrder(sort) {
+            currentSort = sort;
+            document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.sort-btn[data-sort="${sort}"]`).classList.add('active');
+            renderIdeas();
+        }
+
+        function sortIdeas(list) {
+            const sorted = [...list];
+            switch (currentSort) {
+                case 'date':
+                    sorted.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+                    break;
+                case 'status':
+                    sorted.sort((a, b) => (STATUS_ORDER[a.status] || 0) - (STATUS_ORDER[b.status] || 0));
+                    break;
+                case 'badge':
+                    sorted.sort((a, b) => {
+                        const ba = computeProveItBadge(a);
+                        const bb = computeProveItBadge(b);
+                        return (BADGE_ORDER[ba.level] || 2) - (BADGE_ORDER[bb.level] || 2);
+                    });
+                    break;
+                case 'effect':
+                    sorted.sort((a, b) => {
+                        const ea = EFFECT_ORDER[a.effectSize || ''] !== undefined ? EFFECT_ORDER[a.effectSize || ''] : 4;
+                        const eb = EFFECT_ORDER[b.effectSize || ''] !== undefined ? EFFECT_ORDER[b.effectSize || ''] : 4;
+                        return ea - eb;
+                    });
+                    break;
+            }
+            return sorted;
+        }
+
+        // ========== Research Scorecard ==========
+
+        function updateScorecard() {
+            const total = ideas.length;
+            const tested = ideas.filter(i => i.backtest_results && i.backtest_results.tStat !== undefined && i.backtest_results.tStat !== '').length;
+            const passing = ideas.filter(i => computeProveItBadge(i).level === 'proven').length;
+            const successRate = tested > 0 ? ((passing / tested) * 100).toFixed(0) : '0';
+
+            // Average Sharpe of passing ideas
+            const passingSharpes = ideas
+                .filter(i => computeProveItBadge(i).level === 'proven' && i.backtest_results && i.backtest_results.sharpe !== undefined && i.backtest_results.sharpe !== '')
+                .map(i => parseFloat(i.backtest_results.sharpe));
+            const avgSharpe = passingSharpes.length > 0 ? (passingSharpes.reduce((a, b) => a + b, 0) / passingSharpes.length).toFixed(2) : '--';
+
+            document.getElementById('scTotal').textContent = total;
+            document.getElementById('scTested').textContent = tested;
+            document.getElementById('scTested').closest('.scorecard-item').querySelector('.scorecard-label').textContent =
+                `Tested (${total > 0 ? ((tested / total) * 100).toFixed(0) : 0}%)`;
+            document.getElementById('scPassing').textContent = passing;
+            document.getElementById('scSuccessRate').textContent = successRate + '%';
+            document.getElementById('scSuccessRate').className = 'scorecard-value ' + (parseInt(successRate) >= 50 ? 'green' : parseInt(successRate) >= 25 ? 'yellow' : 'red');
+            document.getElementById('scAvgSharpe').textContent = avgSharpe;
+            if (avgSharpe !== '--') {
+                document.getElementById('scAvgSharpe').className = 'scorecard-value ' + (parseFloat(avgSharpe) >= 1.0 ? 'green' : parseFloat(avgSharpe) >= 0.5 ? 'yellow' : 'red');
+            }
+        }
+
+        // ========== Load / Save ==========
+
         function loadIdeas() {
             try {
                 ideas = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -682,10 +1128,10 @@
                 ideas = [];
             }
             updateStats();
+            updateScorecard();
             renderIdeas();
         }
 
-        // Update stats
         function updateStats() {
             document.getElementById('totalIdeas').textContent = ideas.length;
             document.getElementById('newIdeas').textContent = ideas.filter(i => i.status === 'new').length;
@@ -693,7 +1139,12 @@
             document.getElementById('completedIdeas').textContent = ideas.filter(i => i.status === 'completed').length;
         }
 
-        // Render ideas
+        function saveIdeas() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+        }
+
+        // ========== Render Ideas ==========
+
         function renderIdeas() {
             const container = document.getElementById('ideasList');
             const searchTerm = document.getElementById('searchBox').value.toLowerCase();
@@ -709,44 +1160,68 @@
             if (searchTerm) {
                 filtered = filtered.filter(i =>
                     i.title.toLowerCase().includes(searchTerm) ||
-                    (i.notes && i.notes.toLowerCase().includes(searchTerm))
+                    (i.notes && i.notes.toLowerCase().includes(searchTerm)) ||
+                    (i.hypothesis && i.hypothesis.toLowerCase().includes(searchTerm))
                 );
             }
+
+            // Apply sorting
+            filtered = sortIdeas(filtered);
 
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-ideas-page">
                         <h3>No research ideas yet</h3>
-                        <p>Save articles from the news feed by clicking the 💡 button on any news card.</p>
+                        <p>Save articles from the news feed by clicking the \uD83D\uDCA1 button, or click "+ New Idea" above.</p>
                         <a href="index.html" class="btn btn-refresh">Go to News Feed</a>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = filtered.map((idea, idx) => {
+            container.innerHTML = filtered.map((idea) => {
                 const originalIdx = ideas.indexOf(idea);
+                const badge = computeProveItBadge(idea);
+                const hlzWarn = hasHLZWarning(idea);
+                const bt = idea.backtest_results || {};
+
                 return `
                     <div class="idea-card" data-idx="${originalIdx}">
                         <div class="idea-card-header">
-                            <div>
+                            <div style="flex:1; min-width:0;">
                                 <h3 class="idea-card-title">
-                                    <a href="${idea.link}" target="_blank">${escapeHtml(idea.title)}</a>
+                                    <a href="${idea.link || '#'}" target="_blank">${escapeHtml(idea.title)}</a>
                                 </h3>
                                 <div class="idea-card-meta">
                                     <span>Saved: ${formatDate(idea.savedAt)}</span>
+                                    ${idea.assetClass ? '<span>' + escapeHtml(idea.assetClass) + '</span>' : ''}
+                                    ${idea.timeframe ? '<span>' + escapeHtml(idea.timeframe) + '</span>' : ''}
                                 </div>
                             </div>
-                            <div class="idea-card-actions">
-                                <select class="action-btn" onchange="updateStatus(${originalIdx}, this.value)">
-                                    <option value="new" ${idea.status === 'new' ? 'selected' : ''}>New</option>
-                                    <option value="in-progress" ${idea.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
-                                    <option value="completed" ${idea.status === 'completed' ? 'selected' : ''}>Completed</option>
-                                    <option value="archived" ${idea.status === 'archived' ? 'selected' : ''}>Archived</option>
-                                </select>
-                                <button class="action-btn delete" onclick="deleteIdea(${originalIdx})">Delete</button>
+                            <div class="idea-card-badges">
+                                <span class="prove-it-badge ${badge.cssClass}">${badge.emoji} ${badge.label}</span>
+                                ${hlzWarn ? '<span class="hlz-warning">\u26A0\uFE0F HLZ Risk</span>' : ''}
                             </div>
                         </div>
+                        <div class="idea-card-actions" style="display:flex; gap:var(--spacing-sm); margin-bottom: var(--spacing-sm);">
+                            <select class="action-btn" onchange="updateStatus(${originalIdx}, this.value)">
+                                <option value="new" ${idea.status === 'new' ? 'selected' : ''}>New</option>
+                                <option value="in-progress" ${idea.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                                <option value="completed" ${idea.status === 'completed' ? 'selected' : ''}>Completed</option>
+                                <option value="archived" ${idea.status === 'archived' ? 'selected' : ''}>Archived</option>
+                            </select>
+                            <button class="action-btn delete" onclick="deleteIdea(${originalIdx})">Delete</button>
+                        </div>
+
+                        ${idea.hypothesis ? '<div class="idea-hypothesis">' + escapeHtml(idea.hypothesis) + '</div>' : ''}
+
+                        ${idea.effectSize || idea.timeframe || idea.assetClass ? `
+                        <div class="idea-meta-tags">
+                            ${idea.effectSize ? '<span class="idea-meta-tag">Effect: ' + escapeHtml(idea.effectSize) + '</span>' : ''}
+                            ${idea.timeframe ? '<span class="idea-meta-tag">Timeframe: ' + escapeHtml(idea.timeframe) + '</span>' : ''}
+                            ${idea.assetClass ? '<span class="idea-meta-tag">' + escapeHtml(idea.assetClass) + '</span>' : ''}
+                        </div>` : ''}
+
                         <div class="idea-notes">
                             <div class="idea-notes-label">Research Notes</div>
                             <textarea
@@ -754,6 +1229,48 @@
                                 onchange="updateNotes(${originalIdx}, this.value)"
                             >${idea.notes || ''}</textarea>
                         </div>
+
+                        <!-- Backtest Results Collapsible -->
+                        <div class="backtest-section">
+                            <button class="backtest-toggle" onclick="toggleBacktest(this)">
+                                <span>\uD83D\uDCCA Backtest Results</span>
+                                <span class="chevron">\u25BC</span>
+                            </button>
+                            <div class="backtest-body" id="backtestBody-${originalIdx}">
+                                <div class="backtest-grid">
+                                    <div class="backtest-field">
+                                        <label>Sharpe Ratio</label>
+                                        <input type="number" step="0.01" id="bt-sharpe-${originalIdx}" value="${bt.sharpe !== undefined ? bt.sharpe : ''}" placeholder="e.g. 1.25">
+                                    </div>
+                                    <div class="backtest-field">
+                                        <label>t-Statistic</label>
+                                        <input type="number" step="0.01" id="bt-tstat-${originalIdx}" value="${bt.tStat !== undefined ? bt.tStat : ''}" placeholder="e.g. 3.2">
+                                    </div>
+                                    <div class="backtest-field">
+                                        <label>Max Drawdown %</label>
+                                        <input type="number" step="0.1" id="bt-dd-${originalIdx}" value="${bt.maxDrawdown !== undefined ? bt.maxDrawdown : ''}" placeholder="e.g. -15.3">
+                                    </div>
+                                    <div class="backtest-field">
+                                        <label>Win Rate %</label>
+                                        <input type="number" step="0.1" id="bt-winrate-${originalIdx}" value="${bt.winRate !== undefined ? bt.winRate : ''}" placeholder="e.g. 58.5">
+                                    </div>
+                                    <div class="backtest-field">
+                                        <label>Number of Trades</label>
+                                        <input type="number" step="1" id="bt-trades-${originalIdx}" value="${bt.numTrades !== undefined ? bt.numTrades : ''}" placeholder="e.g. 240">
+                                    </div>
+                                    <div class="backtest-field">
+                                        <label>In-Sample Period</label>
+                                        <input type="text" id="bt-is-${originalIdx}" value="${bt.isPeriod || ''}" placeholder="e.g. 2015-2020">
+                                    </div>
+                                    <div class="backtest-field">
+                                        <label>Out-of-Sample Period</label>
+                                        <input type="text" id="bt-oos-${originalIdx}" value="${bt.oosPeriod || ''}" placeholder="e.g. 2020-2023">
+                                    </div>
+                                </div>
+                                <button class="backtest-save-btn" onclick="saveBacktestFromCard(${originalIdx})">Save Backtest Results</button>
+                            </div>
+                        </div>
+
                         <div class="idea-testing">
                             <button class="test-this-btn" onclick="openTestModal(${originalIdx})">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -761,15 +1278,19 @@
                                 </svg>
                                 Test This
                             </button>
-                            ${idea.backtest_results ? `
+                            ${idea.backtest_results && idea.backtest_results.sharpe !== undefined && idea.backtest_results.sharpe !== '' ? `
                             <div class="backtest-results-mini">
-                                <span class="result-badge ${idea.backtest_results.sharpe >= 1 ? 'good' : idea.backtest_results.sharpe >= 0 ? 'neutral' : 'bad'}">
-                                    Sharpe: ${idea.backtest_results.sharpe.toFixed(2)}
+                                <span class="result-badge ${parseFloat(idea.backtest_results.sharpe) >= 1 ? 'good' : parseFloat(idea.backtest_results.sharpe) >= 0 ? 'neutral' : 'bad'}">
+                                    Sharpe: ${parseFloat(idea.backtest_results.sharpe).toFixed(2)}
                                 </span>
-                                <span class="result-badge ${idea.backtest_results.max_drawdown > -20 ? 'good' : 'bad'}">
-                                    DD: ${idea.backtest_results.max_drawdown.toFixed(1)}%
-                                </span>
-                                <span class="result-date">Tested: ${formatDate(idea.backtest_results.run_date)}</span>
+                                ${idea.backtest_results.maxDrawdown !== undefined && idea.backtest_results.maxDrawdown !== '' ? `
+                                <span class="result-badge ${parseFloat(idea.backtest_results.maxDrawdown) > -20 ? 'good' : 'bad'}">
+                                    DD: ${parseFloat(idea.backtest_results.maxDrawdown).toFixed(1)}%
+                                </span>` : ''}
+                                ${idea.backtest_results.tStat !== undefined && idea.backtest_results.tStat !== '' ? `
+                                <span class="result-badge ${parseFloat(idea.backtest_results.tStat) > 3.0 ? 'good' : parseFloat(idea.backtest_results.tStat) > 2.0 ? 'neutral' : 'bad'}">
+                                    t: ${parseFloat(idea.backtest_results.tStat).toFixed(2)}
+                                </span>` : ''}
                             </div>
                             ` : ''}
                         </div>
@@ -778,7 +1299,132 @@
             }).join('');
         }
 
-        // Update status
+        // ========== Backtest Section Toggle & Save ==========
+
+        function toggleBacktest(btn) {
+            btn.classList.toggle('open');
+            const body = btn.nextElementSibling;
+            body.classList.toggle('open');
+        }
+
+        function saveBacktestFromCard(idx) {
+            const sharpe = document.getElementById(`bt-sharpe-${idx}`).value;
+            const tStat = document.getElementById(`bt-tstat-${idx}`).value;
+            const maxDrawdown = document.getElementById(`bt-dd-${idx}`).value;
+            const winRate = document.getElementById(`bt-winrate-${idx}`).value;
+            const numTrades = document.getElementById(`bt-trades-${idx}`).value;
+            const isPeriod = document.getElementById(`bt-is-${idx}`).value;
+            const oosPeriod = document.getElementById(`bt-oos-${idx}`).value;
+
+            ideas[idx].backtest_results = {
+                sharpe: sharpe !== '' ? parseFloat(sharpe) : '',
+                tStat: tStat !== '' ? parseFloat(tStat) : '',
+                maxDrawdown: maxDrawdown !== '' ? parseFloat(maxDrawdown) : '',
+                winRate: winRate !== '' ? parseFloat(winRate) : '',
+                numTrades: numTrades !== '' ? parseInt(numTrades) : '',
+                isPeriod: isPeriod,
+                oosPeriod: oosPeriod,
+                run_date: new Date().toISOString()
+            };
+            ideas[idx].updatedAt = new Date().toISOString();
+            saveIdeas();
+            updateScorecard();
+            updateStats();
+            renderIdeas();
+            showToast('Backtest results saved!');
+        }
+
+        // ========== Save Idea Modal ==========
+
+        function openSaveIdeaModal(prefill) {
+            // Clear fields
+            document.getElementById('saveIdeaTitle').value = (prefill && prefill.title) || '';
+            document.getElementById('saveIdeaLink').value = (prefill && prefill.link) || '';
+            document.getElementById('saveIdeaHypothesis').value = '';
+            document.getElementById('saveIdeaEffectSize').value = '';
+            document.getElementById('saveIdeaTimeframe').value = '';
+            document.getElementById('saveIdeaAssetClass').value = '';
+            document.getElementById('saveIdeaNotes').value = '';
+
+            // Clear validation errors
+            document.querySelectorAll('.validation-error').forEach(e => e.classList.remove('show'));
+
+            document.getElementById('saveIdeaModal').style.display = 'flex';
+        }
+
+        function closeSaveIdeaModal() {
+            document.getElementById('saveIdeaModal').style.display = 'none';
+        }
+
+        function submitSaveIdea() {
+            const title = document.getElementById('saveIdeaTitle').value.trim();
+            const link = document.getElementById('saveIdeaLink').value.trim();
+            const hypothesis = document.getElementById('saveIdeaHypothesis').value.trim();
+            const effectSize = document.getElementById('saveIdeaEffectSize').value;
+            const timeframe = document.getElementById('saveIdeaTimeframe').value;
+            const assetClass = document.getElementById('saveIdeaAssetClass').value;
+            const notes = document.getElementById('saveIdeaNotes').value.trim();
+
+            // Validation
+            let valid = true;
+
+            if (!title) {
+                valid = false;
+                // Title is required but uses existing pattern
+            }
+
+            if (!hypothesis) {
+                document.getElementById('hypothesisError').classList.add('show');
+                valid = false;
+            } else {
+                document.getElementById('hypothesisError').classList.remove('show');
+            }
+
+            if (!effectSize) {
+                document.getElementById('effectSizeError').classList.add('show');
+                valid = false;
+            } else {
+                document.getElementById('effectSizeError').classList.remove('show');
+            }
+
+            if (!timeframe) {
+                document.getElementById('timeframeError').classList.add('show');
+                valid = false;
+            } else {
+                document.getElementById('timeframeError').classList.remove('show');
+            }
+
+            if (!valid) return;
+
+            const newIdea = {
+                title: title || 'Untitled Research Idea',
+                link: link || '#',
+                status: 'new',
+                notes: notes,
+                hypothesis: hypothesis,
+                effectSize: effectSize,
+                timeframe: timeframe,
+                assetClass: assetClass,
+                savedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            ideas.unshift(newIdea);
+            saveIdeas();
+            updateStats();
+            updateScorecard();
+            renderIdeas();
+            closeSaveIdeaModal();
+            showToast('Research idea saved with hypothesis!');
+        }
+
+        // Close save idea modal on outside click
+        document.getElementById('saveIdeaModal').addEventListener('click', (e) => {
+            if (e.target.id === 'saveIdeaModal') closeSaveIdeaModal();
+        });
+
+        // ========== Status, Notes, Delete ==========
+
         function updateStatus(idx, status) {
             ideas[idx].status = status;
             ideas[idx].updatedAt = new Date().toISOString();
@@ -786,29 +1432,24 @@
             updateStats();
         }
 
-        // Update notes
         function updateNotes(idx, notes) {
             ideas[idx].notes = notes;
             ideas[idx].updatedAt = new Date().toISOString();
             saveIdeas();
         }
 
-        // Delete idea
         function deleteIdea(idx) {
             if (confirm('Delete this research idea?')) {
                 ideas.splice(idx, 1);
                 saveIdeas();
                 updateStats();
+                updateScorecard();
                 renderIdeas();
             }
         }
 
-        // Save ideas
-        function saveIdeas() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
-        }
+        // ========== Export ==========
 
-        // Export ideas
         function exportIdeas(format) {
             if (ideas.length === 0) {
                 alert('No ideas to export');
@@ -822,15 +1463,26 @@
                 filename = `research_ideas_${new Date().toISOString().split('T')[0]}.json`;
                 type = 'application/json';
             } else {
-                const headers = ['Title', 'Link', 'Status', 'Notes', 'Saved At', 'Updated At'];
-                const rows = ideas.map(i => [
-                    `"${i.title.replace(/"/g, '""')}"`,
-                    i.link,
-                    i.status,
-                    `"${(i.notes || '').replace(/"/g, '""')}"`,
-                    i.savedAt,
-                    i.updatedAt || ''
-                ]);
+                const headers = ['Title', 'Link', 'Status', 'Hypothesis', 'Effect Size', 'Timeframe', 'Asset Class', 'Notes', 'Sharpe', 't-Stat', 'Badge', 'Saved At', 'Updated At'];
+                const rows = ideas.map(i => {
+                    const badge = computeProveItBadge(i);
+                    const bt = i.backtest_results || {};
+                    return [
+                        `"${i.title.replace(/"/g, '""')}"`,
+                        i.link || '',
+                        i.status,
+                        `"${(i.hypothesis || '').replace(/"/g, '""')}"`,
+                        i.effectSize || '',
+                        i.timeframe || '',
+                        i.assetClass || '',
+                        `"${(i.notes || '').replace(/"/g, '""')}"`,
+                        bt.sharpe !== undefined && bt.sharpe !== '' ? bt.sharpe : '',
+                        bt.tStat !== undefined && bt.tStat !== '' ? bt.tStat : '',
+                        badge.label,
+                        i.savedAt,
+                        i.updatedAt || ''
+                    ];
+                });
                 content = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
                 filename = `research_ideas_${new Date().toISOString().split('T')[0]}.csv`;
                 type = 'text/csv';
@@ -845,8 +1497,10 @@
             URL.revokeObjectURL(url);
         }
 
-        // Utility functions
+        // ========== Utility Functions ==========
+
         function formatDate(dateString) {
+            if (!dateString) return 'N/A';
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', {
                 month: 'short',
@@ -861,7 +1515,8 @@
             return div.innerHTML;
         }
 
-        // Event listeners
+        // ========== Event Listeners ==========
+
         document.querySelectorAll('.filter-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -876,6 +1531,83 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', loadIdeas);
     </script>
+
+    <!-- Save Idea Modal (Prove-It Enhanced) -->
+    <div class="modal-overlay" id="saveIdeaModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>&#128161; Save Research Idea</h3>
+                <button class="modal-close" onclick="closeSaveIdeaModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Title <span class="required-star">*</span></label>
+                    <input type="text" id="saveIdeaTitle" placeholder="Research idea title...">
+                </div>
+
+                <div class="form-group">
+                    <label>Source Link</label>
+                    <input type="text" id="saveIdeaLink" placeholder="https://...">
+                </div>
+
+                <div class="form-group">
+                    <label>Falsifiable Hypothesis <span class="required-star">*</span></label>
+                    <textarea id="saveIdeaHypothesis" placeholder="If [condition], then [measurable outcome] should occur within [timeframe]. Example: If VIX term structure inverts, SPX should decline >2% within 5 trading days." rows="3"></textarea>
+                    <div class="field-hint">State a clear, testable prediction with measurable outcomes. This enforces research discipline.</div>
+                    <div class="validation-error" id="hypothesisError">Falsifiable hypothesis is required. State your prediction in "If X, then Y" format.</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Expected Effect Size <span class="required-star">*</span></label>
+                        <select id="saveIdeaEffectSize">
+                            <option value="">-- Select --</option>
+                            <option value="<50bp">&lt; 50bp</option>
+                            <option value="50-100bp">50-100bp</option>
+                            <option value="100-300bp">100-300bp</option>
+                            <option value="300bp+">300bp+</option>
+                        </select>
+                        <div class="validation-error" id="effectSizeError">Expected effect size is required.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Timeframe <span class="required-star">*</span></label>
+                        <select id="saveIdeaTimeframe">
+                            <option value="">-- Select --</option>
+                            <option value="Intraday">Intraday</option>
+                            <option value="1-5 days">1-5 days</option>
+                            <option value="1-4 weeks">1-4 weeks</option>
+                            <option value="1-3 months">1-3 months</option>
+                            <option value="3-12 months">3-12 months</option>
+                        </select>
+                        <div class="validation-error" id="timeframeError">Timeframe is required.</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Asset Class</label>
+                    <select id="saveIdeaAssetClass">
+                        <option value="">-- Select --</option>
+                        <option value="Equity">Equity</option>
+                        <option value="Fixed Income">Fixed Income</option>
+                        <option value="Commodities">Commodities</option>
+                        <option value="FX">FX</option>
+                        <option value="Vol">Vol</option>
+                        <option value="Cross-Asset">Cross-Asset</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Initial Notes</label>
+                    <textarea id="saveIdeaNotes" placeholder="Data requirements, initial observations, related papers..." rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeSaveIdeaModal()">Cancel</button>
+                <button class="btn" style="background: var(--accent-green); color: white;" onclick="submitSaveIdea()">Save Idea</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Test This Modal -->
     <div class="modal-overlay" id="testModal" style="display: none;">
@@ -1088,14 +1820,18 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // Function to save backtest results to an idea
+        // Function to save backtest results to an idea (called from Test This modal / external)
         function saveBacktestResults(idx, results) {
+            // Merge with existing backtest_results to preserve fields
+            const existing = ideas[idx].backtest_results || {};
             ideas[idx].backtest_results = {
+                ...existing,
                 ...results,
                 run_date: new Date().toISOString()
             };
             ideas[idx].updatedAt = new Date().toISOString();
             saveIdeas();
+            updateScorecard();
             renderIdeas();
             showToast('Backtest results saved!');
         }
@@ -1111,6 +1847,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeTestModal();
+                closeSaveIdeaModal();
             }
         });
     </script>

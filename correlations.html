@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correlation Monitor | Quant Research Daily</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* Correlation Monitor - Page Specific Styles */
+        .corr-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        .corr-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .corr-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .corr-title-icon {
+            width: 28px;
+            height: 28px;
+            color: var(--accent-primary);
+        }
+
+        /* Controls Bar */
+        .corr-controls {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .timeframe-group {
+            display: flex;
+            gap: 2px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            padding: 2px;
+            border: 1px solid var(--border-color);
+        }
+
+        .timeframe-btn {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border: none;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: var(--font-mono);
+        }
+
+        .timeframe-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+        }
+
+        .timeframe-btn.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-refresh-corr {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .btn-refresh-corr:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .btn-refresh-corr svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .data-source-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .source-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-yellow);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Page Navigation */
+        .page-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .page-nav a {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+        }
+
+        .page-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .page-nav a.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* Heatmap Section */
+        .corr-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-lg);
+            overflow: hidden;
+        }
+
+        .corr-section-header {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .corr-section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .corr-section-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .corr-section-body {
+            padding: var(--spacing-lg);
+        }
+
+        /* Heatmap Container */
+        .heatmap-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+        }
+
+        #correlationHeatmap {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        #correlationHeatmap svg {
+            font-family: var(--font-mono);
+        }
+
+        /* D3 Heatmap Tooltip */
+        .heatmap-tooltip {
+            position: fixed;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            font-family: var(--font-mono);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .heatmap-tooltip.visible {
+            opacity: 1;
+        }
+
+        .heatmap-tooltip .pair-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--accent-primary);
+        }
+
+        .heatmap-tooltip .corr-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .heatmap-tooltip .corr-label {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+
+        /* Color Legend */
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .legend-gradient {
+            width: 200px;
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(to right, #f85149, #ffa198, #e6edf3, #79c0ff, #58a6ff);
+        }
+
+        /* Regime Alerts */
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .alert-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            border-left: 4px solid var(--border-color);
+            transition: all var(--transition-normal);
+        }
+
+        .alert-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .alert-card.severity-high {
+            border-left-color: var(--accent-red);
+            background: rgba(248, 81, 73, 0.05);
+        }
+
+        .alert-card.severity-moderate {
+            border-left-color: var(--accent-yellow);
+            background: rgba(210, 153, 34, 0.05);
+        }
+
+        .alert-card.severity-low {
+            border-left-color: var(--accent-green);
+            background: rgba(63, 185, 80, 0.05);
+        }
+
+        .alert-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .alert-pair {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+        }
+
+        .alert-severity-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-high {
+            background: rgba(248, 81, 73, 0.15);
+            color: var(--accent-red);
+            border: 1px solid rgba(248, 81, 73, 0.3);
+        }
+
+        .badge-moderate {
+            background: rgba(210, 153, 34, 0.15);
+            color: var(--accent-yellow);
+            border: 1px solid rgba(210, 153, 34, 0.3);
+        }
+
+        .badge-low {
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(63, 185, 80, 0.3);
+        }
+
+        .alert-type {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.4;
+        }
+
+        .alert-values {
+            display: flex;
+            gap: var(--spacing-lg);
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+        }
+
+        .alert-value-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .alert-value-label {
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .alert-value-num {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .alert-value-num.current {
+            color: var(--accent-primary);
+        }
+
+        .alert-value-num.baseline {
+            color: var(--text-secondary);
+        }
+
+        .alert-direction {
+            font-size: 0.75rem;
+            margin-top: var(--spacing-xs);
+        }
+
+        .direction-up { color: var(--accent-red); }
+        .direction-down { color: var(--accent-green); }
+
+        /* All Clear Card */
+        .all-clear {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--accent-green);
+        }
+
+        .all-clear-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--spacing-md);
+            color: var(--accent-green);
+        }
+
+        .all-clear-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .all-clear-text {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        /* Comparison Table */
+        .comparison-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8125rem;
+        }
+
+        .comparison-table thead th {
+            padding: var(--spacing-sm) var(--spacing-md);
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.6875rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .comparison-table tbody td {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-bottom: 1px solid var(--border-light);
+            font-family: var(--font-mono);
+            white-space: nowrap;
+        }
+
+        .comparison-table tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .comparison-table .pair-col {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .comparison-table .current-col {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .delta-green {
+            color: var(--accent-green);
+        }
+
+        .delta-yellow {
+            color: var(--accent-yellow);
+        }
+
+        .delta-red {
+            color: var(--accent-red);
+        }
+
+        /* Footer */
+        .corr-footer {
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .corr-footer p {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .corr-footer .disclaimer {
+            font-size: 0.6875rem;
+        }
+
+        /* Production Note */
+        .production-note {
+            background: rgba(210, 153, 34, 0.08);
+            border: 1px solid rgba(210, 153, 34, 0.2);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-top: var(--spacing-md);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .production-note svg {
+            width: 16px;
+            height: 16px;
+            color: var(--accent-yellow);
+            flex-shrink: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .corr-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .corr-controls {
+                width: 100%;
+            }
+
+            .alerts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .heatmap-container {
+                min-height: 350px;
+            }
+
+            .comparison-table {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="display: block;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                        <h1 class="logo">QRD</h1>
+                        <span class="logo-text">Quant Research Daily</span>
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <span class="corr-title" style="margin-right: auto;">
+                        <svg class="corr-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                            <path d="M10 6.5h4M10 17.5h4M6.5 10v4M17.5 10v4" stroke-dasharray="2 2"/>
+                        </svg>
+                        Correlation Monitor
+                    </span>
+                    <a href="index.html" class="btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        News Feed
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Navigation -->
+        <nav class="page-nav">
+            <a href="index.html">News Feed</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="calendar.html">Calendar</a>
+            <a href="cot.html">COT Data</a>
+            <a href="papers.html">Papers</a>
+            <a href="correlations.html" class="active">Correlations</a>
+            <a href="research-ideas.html">Research Ideas</a>
+            <a href="archive.html">Archive</a>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="corr-container">
+
+            <!-- Controls Bar -->
+            <div class="corr-header">
+                <h2 class="corr-title" style="font-size: 1.25rem;">
+                    Cross-Asset Correlation Matrix
+                </h2>
+                <div class="corr-controls">
+                    <div class="timeframe-group">
+                        <button class="timeframe-btn" data-window="30" onclick="changeTimeframe(30)">30D</button>
+                        <button class="timeframe-btn active" data-window="60" onclick="changeTimeframe(60)">60D</button>
+                        <button class="timeframe-btn" data-window="90" onclick="changeTimeframe(90)">90D</button>
+                    </div>
+                    <button class="btn-refresh-corr" onclick="refreshCorrelations()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                    <div class="data-source-indicator">
+                        <span class="source-dot"></span>
+                        <span id="dataSourceLabel">Simulated Data</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Correlation Heatmap Section -->
+            <section class="corr-section">
+                <div class="corr-section-header">
+                    <span class="corr-section-title">Rolling Correlation Heatmap</span>
+                    <span class="corr-section-subtitle" id="heatmapWindowLabel">60-Day Window</span>
+                </div>
+                <div class="corr-section-body">
+                    <div class="heatmap-container">
+                        <div id="correlationHeatmap"></div>
+                    </div>
+                    <div class="heatmap-legend">
+                        <span>-1.0</span>
+                        <div class="legend-gradient"></div>
+                        <span>+1.0</span>
+                    </div>
+                    <div class="production-note">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        <span>Displaying simulated correlation data with realistic cross-asset structure. In production, this would use cached daily returns from Yahoo Finance or a market data provider.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Regime Alerts Section -->
+            <section class="corr-section">
+                <div class="corr-section-header">
+                    <span class="corr-section-title">Regime Change Alerts</span>
+                    <span class="corr-section-subtitle" id="alertCount">Scanning...</span>
+                </div>
+                <div class="corr-section-body">
+                    <div class="alerts-grid" id="regimeAlerts">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Historical Comparison Section -->
+            <section class="corr-section">
+                <div class="corr-section-header">
+                    <span class="corr-section-title">Historical Comparison</span>
+                    <span class="corr-section-subtitle">Current vs 1Y and 5Y Averages</span>
+                </div>
+                <div class="corr-section-body">
+                    <div class="comparison-table-wrapper">
+                        <table class="comparison-table" id="comparisonTable">
+                            <thead>
+                                <tr>
+                                    <th>Pair</th>
+                                    <th>Current</th>
+                                    <th>1Y Avg</th>
+                                    <th>5Y Avg</th>
+                                    <th>Delta (1Y)</th>
+                                    <th>Delta (5Y)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonBody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="corr-footer">
+            <p>Quant Research Daily - Cross-Asset Correlation Monitor</p>
+            <p class="disclaimer">Correlations computed from simulated returns. Not financial advice. For research purposes only.</p>
+        </footer>
+    </div>
+
+    <!-- Heatmap Tooltip -->
+    <div class="heatmap-tooltip" id="heatmapTooltip">
+        <div class="pair-name" id="tooltipPair"></div>
+        <div class="corr-value" id="tooltipValue"></div>
+        <div class="corr-label" id="tooltipLabel"></div>
+    </div>
+
+    <script src="correlations.js"></script>
+</body>
+</html>

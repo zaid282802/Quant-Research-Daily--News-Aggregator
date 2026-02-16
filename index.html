@@ -79,6 +79,18 @@
                         </svg>
                         Correlations
                     </a>
+                    <a href="regime.html" class="btn" style="background: var(--cat-microstructure); border-color: var(--cat-microstructure); color: #000;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                        </svg>
+                        Regime
+                    </a>
+                    <a href="flows.html" class="btn" style="background: var(--cat-positioning); border-color: var(--cat-positioning); color: #000;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+                        </svg>
+                        Flows
+                    </a>
                 </div>
             </div>
         </header>
@@ -101,18 +113,29 @@
         </div>
 
         <!-- Navigation Tabs -->
-        <nav class="category-nav">
-            <button class="category-tab active" data-category="all">All News</button>
-            <button class="category-tab" data-category="volatility">Volatility & Derivatives</button>
-            <button class="category-tab" data-category="central-banks">Central Banks</button>
-            <button class="category-tab" data-category="systematic">Systematic Trading</button>
-            <button class="category-tab" data-category="factors">Factor Investing</button>
-            <button class="category-tab" data-category="fixed-income">Fixed Income</button>
-            <button class="category-tab" data-category="macro">Macro & Data</button>
-            <button class="category-tab" data-category="commodities">Commodities & FX</button>
-            <button class="category-tab" data-category="academic">Academic Research</button>
-            <button class="category-tab" data-category="energy">Energy</button>
-        </nav>
+        <div class="category-nav-wrapper">
+            <nav class="category-nav">
+                <button class="category-tab active" data-category="all">All News</button>
+                <button class="category-tab" data-category="volatility">Volatility</button>
+                <button class="category-tab" data-category="central-banks">Central Banks</button>
+                <button class="category-tab" data-category="systematic">Systematic</button>
+                <button class="category-tab" data-category="factors">Factors</button>
+                <button class="category-tab" data-category="fixed-income">Fixed Income</button>
+                <button class="category-tab" data-category="macro">Macro</button>
+                <button class="category-tab" data-category="commodities">Commodities & FX</button>
+                <button class="category-tab" data-category="academic">Academic</button>
+                <button class="category-tab" data-category="energy">Energy</button>
+                <button class="category-tab" data-category="alt-data">Alt Data</button>
+                <button class="category-tab" data-category="microstructure">Microstructure</button>
+                <button class="category-tab" data-category="positioning">Positioning</button>
+                <button class="category-tab" data-category="crypto">Crypto</button>
+                <button class="category-tab" data-category="ml-quant">ML/AI</button>
+            </nav>
+        </div>
+        <!-- Sub-Filters (shown when a category with sub-filters is active) -->
+        <div class="category-subfilters" id="subFilters" style="display:none">
+            <div class="subfilter-pills" id="subFilterPills"></div>
+        </div>
 
         <!-- Hero Breaking News Section -->
         <section class="hero-news-section" id="heroNews">
@@ -185,6 +208,13 @@
                             <option value="imf">IMF</option>
                             <option value="bis">BIS</option>
                             <option value="eia">EIA</option>
+                            <option value="coindesk">CoinDesk</option>
+                            <option value="blockworks">Blockworks</option>
+                            <option value="openai">OpenAI</option>
+                            <option value="deepmind">DeepMind</option>
+                            <option value="boj">BOJ</option>
+                            <option value="rba">RBA</option>
+                            <option value="boc">Bank of Canada</option>
                         </select>
                         <select id="timeFilter" class="filter-select">
                             <option value="today">Today</option>
@@ -278,6 +308,40 @@
                 <a href="correlations.html" class="widget-view-all">Full Heatmap &rarr;</a>
             </div>
 
+            <!-- Regime Monitor Widget -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Market Regime</h3>
+                <div id="regimeWidget">
+                    <div class="loading-placeholder small"><div class="loading-spinner small"></div></div>
+                </div>
+                <a href="regime.html" class="widget-view-all">Full Dashboard &rarr;</a>
+            </div>
+
+            <!-- Positioning Extremes Widget -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Positioning Extremes</h3>
+                <div id="positioningWidget">
+                    <div class="loading-placeholder small"><div class="loading-spinner small"></div></div>
+                </div>
+                <a href="flows.html" class="widget-view-all">Full Positioning &rarr;</a>
+            </div>
+
+            <!-- Crypto Pulse Widget -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Crypto Pulse</h3>
+                <div id="cryptoPulseWidget">
+                    <div class="loading-placeholder small"><div class="loading-spinner small"></div></div>
+                </div>
+            </div>
+
+            <!-- Alert Feed Widget -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Alert Feed <span class="alert-badge" id="alertBadge" style="display:none">0</span></h3>
+                <div id="alertFeedWidget">
+                    <div class="empty-ideas"><p>No active alerts</p></div>
+                </div>
+            </div>
+
             <!-- Quick Links -->
             <div class="sidebar-widget">
                 <h3 class="widget-title">Quick Links</h3>
@@ -309,7 +373,13 @@
                 <h3 class="widget-title">⌨️ Shortcuts</h3>
                 <div class="shortcuts-list">
                     <div class="shortcut-item"><kbd>R</kbd> Refresh news</div>
-                    <div class="shortcut-item"><kbd>1-9</kbd> Filter by category</div>
+                    <div class="shortcut-item"><kbd>1-9</kbd> Categories 1-9</div>
+                    <div class="shortcut-item"><kbd>0</kbd> Category 10</div>
+                    <div class="shortcut-item"><kbd>A</kbd> Alt Data</div>
+                    <div class="shortcut-item"><kbd>M</kbd> Microstructure</div>
+                    <div class="shortcut-item"><kbd>P</kbd> Positioning</div>
+                    <div class="shortcut-item"><kbd>C</kbd> Crypto</div>
+                    <div class="shortcut-item"><kbd>L</kbd> ML/AI Quant</div>
                 </div>
             </div>
         </aside>
@@ -351,6 +421,10 @@
                 <option value="central-banks">Central Banks</option>
                 <option value="macro">Macro</option>
                 <option value="markets">Markets</option>
+                <option value="crypto">Crypto</option>
+                <option value="ml-quant">ML/AI</option>
+                <option value="positioning">Positioning</option>
+                <option value="microstructure">Microstructure</option>
             </select>
             <span class="hot-news-count" id="hotNewsCount">0 alerts</span>
         </div>
@@ -358,8 +432,11 @@
 
     <!-- Core Scripts -->
     <script src="storage.js"></script>
+    <script src="sources-config.js"></script>
     <script src="volatility.js"></script>
     <script src="factors.js"></script>
+    <script src="regime.js"></script>
+    <script src="flows.js"></script>
     <script src="app.js"></script>
 
     <!-- Service Worker Registration -->

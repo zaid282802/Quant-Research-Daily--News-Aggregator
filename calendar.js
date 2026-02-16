@@ -483,5 +483,73 @@ function initCalendar() {
     console.log('[Calendar] Initialization complete.');
 }
 
+// Old standalone init removed — merged into extended init below
+
+// =====================================================
+// Global Central Bank Calendar
+// =====================================================
+
+const GLOBAL_CB_DATA = [
+    { name: 'Federal Reserve', code: 'FED', flag: '🇺🇸', rate: '4.50%', trend: 'hold',
+      meetings: [new Date(2026,0,28), new Date(2026,2,18), new Date(2026,4,6), new Date(2026,5,17), new Date(2026,6,29), new Date(2026,8,16), new Date(2026,10,4), new Date(2026,11,16)] },
+    { name: 'ECB', code: 'ECB', flag: '🇪🇺', rate: '2.75%', trend: 'cut',
+      meetings: [new Date(2026,0,30), new Date(2026,2,12), new Date(2026,3,16), new Date(2026,5,4), new Date(2026,6,16), new Date(2026,8,10), new Date(2026,9,22), new Date(2026,11,10)] },
+    { name: 'Bank of Japan', code: 'BOJ', flag: '🇯🇵', rate: '0.50%', trend: 'hike',
+      meetings: [new Date(2026,0,24), new Date(2026,2,14), new Date(2026,4,1), new Date(2026,5,16), new Date(2026,6,15), new Date(2026,8,17), new Date(2026,9,29), new Date(2026,11,18)] },
+    { name: 'Bank of England', code: 'BOE', flag: '🇬🇧', rate: '4.50%', trend: 'cut',
+      meetings: [new Date(2026,1,6), new Date(2026,2,20), new Date(2026,4,8), new Date(2026,5,19), new Date(2026,7,6), new Date(2026,8,18), new Date(2026,10,5), new Date(2026,11,17)] },
+    { name: 'RBA', code: 'RBA', flag: '🇦🇺', rate: '4.10%', trend: 'cut',
+      meetings: [new Date(2026,1,17), new Date(2026,3,7), new Date(2026,4,19), new Date(2026,6,7), new Date(2026,7,11), new Date(2026,9,6), new Date(2026,10,3), new Date(2026,11,1)] },
+    { name: 'Bank of Canada', code: 'BOC', flag: '🇨🇦', rate: '3.00%', trend: 'hold',
+      meetings: [new Date(2026,0,29), new Date(2026,2,12), new Date(2026,3,16), new Date(2026,5,4), new Date(2026,6,16), new Date(2026,8,3), new Date(2026,9,22), new Date(2026,11,10)] },
+    { name: 'RBNZ', code: 'RBNZ', flag: '🇳🇿', rate: '4.25%', trend: 'cut',
+      meetings: [new Date(2026,1,19), new Date(2026,3,9), new Date(2026,4,28), new Date(2026,6,9), new Date(2026,7,13), new Date(2026,9,8), new Date(2026,10,26)] },
+    { name: 'Riksbank', code: 'RIKS', flag: '🇸🇪', rate: '2.50%', trend: 'hold',
+      meetings: [new Date(2026,0,29), new Date(2026,2,26), new Date(2026,4,7), new Date(2026,5,24), new Date(2026,8,3), new Date(2026,10,5), new Date(2026,11,17)] },
+    { name: 'SNB', code: 'SNB', flag: '🇨🇭', rate: '0.50%', trend: 'hold',
+      meetings: [new Date(2026,2,20), new Date(2026,5,19), new Date(2026,8,25), new Date(2026,11,11)] },
+    { name: 'PBoC', code: 'PBOC', flag: '🇨🇳', rate: '3.10%', trend: 'cut',
+      meetings: [new Date(2026,0,20), new Date(2026,1,20), new Date(2026,2,20), new Date(2026,3,20), new Date(2026,4,20), new Date(2026,5,20), new Date(2026,6,20), new Date(2026,7,20), new Date(2026,8,20), new Date(2026,9,20), new Date(2026,10,20), new Date(2026,11,20)] }
+];
+
+function renderGlobalCBCalendar() {
+    const container = document.getElementById('globalCBCalendar');
+    if (!container) return;
+
+    const now = new Date();
+
+    const rows = GLOBAL_CB_DATA.map(cb => {
+        const nextMeeting = cb.meetings.find(d => d > now);
+        const nextStr = nextMeeting ? nextMeeting.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'TBD';
+        const daysUntil = nextMeeting ? Math.ceil((nextMeeting - now) / 86400000) : '—';
+
+        const trendColor = cb.trend === 'hike' ? 'var(--accent-red)' :
+                          cb.trend === 'cut' ? 'var(--accent-green)' : 'var(--text-muted)';
+        const trendIcon = cb.trend === 'hike' ? '&#9650;' : cb.trend === 'cut' ? '&#9660;' : '&#8594;';
+        const urgencyClass = daysUntil <= 7 ? 'cb-urgent' : daysUntil <= 14 ? 'cb-soon' : '';
+
+        return `<tr class="${urgencyClass}">
+            <td>${cb.flag} ${cb.code}</td>
+            <td>${cb.rate} <span style="color:${trendColor};font-size:0.75rem;">${trendIcon}</span></td>
+            <td>${nextStr}</td>
+            <td style="font-family:var(--font-mono);font-size:0.8125rem;">${daysUntil}d</td>
+        </tr>`;
+    }).join('');
+
+    container.innerHTML = `
+        <table class="cb-calendar-table">
+            <thead><tr><th>Bank</th><th>Rate</th><th>Next</th><th>In</th></tr></thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
+}
+
+function initCalendarExtended() {
+    renderGlobalCBCalendar();
+}
+
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', initCalendar);
+document.addEventListener('DOMContentLoaded', () => {
+    initCalendar();
+    initCalendarExtended();
+});

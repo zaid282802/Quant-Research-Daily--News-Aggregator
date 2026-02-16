@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="author" content="Zaid Annigeri">
+    <meta name="copyright" content="Copyright 2025-2026 Zaid Annigeri. All rights reserved.">
+    <title>Market Regime Dashboard | Quant Research Daily</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --bg-card: #1c2128;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            color-scheme: dark;
+        }
+        html, body { background: #0d1117 !important; color: #e6edf3 !important; }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* =====================================================
+           Market Regime Dashboard - Page Specific Styles
+           ===================================================== */
+
+        /* Page Navigation */
+        .page-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .page-nav a {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+        }
+
+        .page-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .page-nav a.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .regime-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        .regime-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .regime-title-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .regime-title-section p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .regime-controls {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+        }
+
+        .btn-refresh-regime {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .btn-refresh-regime:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .btn-refresh-regime svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .regime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .regime-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+        }
+
+        .regime-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .regime-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .regime-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .regime-badge.green { background: rgba(63, 185, 80, 0.2); color: #3fb950; }
+        .regime-badge.yellow { background: rgba(210, 153, 34, 0.2); color: #d29922; }
+        .regime-badge.orange { background: rgba(219, 109, 40, 0.2); color: #db6d28; }
+        .regime-badge.red { background: rgba(248, 81, 73, 0.2); color: #f85149; }
+
+        .regime-gauge-section {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+        }
+
+        .regime-overall-label {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: var(--spacing-md);
+        }
+
+        .regime-overall-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: var(--spacing-sm);
+        }
+
+        #regimeGauge {
+            margin: 0 auto;
+        }
+
+        .regime-indicator-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-tertiary);
+            margin-top: var(--spacing-sm);
+            overflow: hidden;
+        }
+
+        .regime-indicator-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .regime-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            margin: var(--spacing-sm) 0;
+        }
+
+        /* Change Log */
+        .regime-log-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .regime-log-header {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .regime-log-body {
+            padding: var(--spacing-lg);
+        }
+
+        .change-log-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .change-log-table th {
+            text-align: left;
+            padding: var(--spacing-sm) var(--spacing-md);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .change-log-table td {
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .regime-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .regime-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body style="background:#0d1117;color:#e6edf3;">
+    <div class="app-container" style="display: block;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                        <h1 class="logo">QRD</h1>
+                        <span class="logo-text">Quant Research Daily</span>
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <span style="margin-right: auto; font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: var(--spacing-sm);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-primary);">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Market Regime Dashboard
+                    </span>
+                    <a href="index.html" class="btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        News Feed
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Navigation -->
+        <nav class="page-nav">
+            <a href="index.html">News</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="calendar.html">Calendar</a>
+            <a href="cot.html">COT</a>
+            <a href="papers.html">Papers</a>
+            <a href="correlations.html">Correlations</a>
+            <a href="regime.html" class="active">Regime</a>
+            <a href="flows.html">Flows</a>
+            <a href="research-ideas.html">Research</a>
+            <a href="archive.html">Archive</a>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="regime-container">
+
+            <!-- Page Header & Controls -->
+            <div class="regime-header">
+                <div class="regime-title-section">
+                    <h2>Market Regime Dashboard</h2>
+                    <p>At-a-glance market regime state across 6 key indicators</p>
+                </div>
+                <div class="regime-controls">
+                    <button class="btn-refresh-regime" onclick="refreshRegime()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overall Regime Gauge -->
+            <section class="regime-gauge-section">
+                <div id="regimeGauge"></div>
+                <div class="regime-overall-label" id="overallLabel">--</div>
+                <div class="regime-overall-subtitle" id="overallSubtitle">Loading regime data...</div>
+            </section>
+
+            <!-- 2x3 Indicator Grid -->
+            <div class="regime-grid" id="indicatorGrid">
+                <!-- Populated by regime.js -->
+            </div>
+
+            <!-- Regime Change Log -->
+            <section class="regime-log-section">
+                <div class="regime-log-header">Regime Change Log</div>
+                <div class="regime-log-body" id="regimeChangeLog">
+                    <!-- Populated by regime.js -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        function refreshRegime() {
+            const btn = document.querySelector('.btn-refresh-regime');
+            btn.style.borderColor = 'var(--accent-primary)';
+            btn.style.color = 'var(--accent-primary)';
+            setTimeout(() => { btn.style.borderColor = ''; btn.style.color = ''; }, 500);
+            if (typeof initRegimeDashboard === 'function') {
+                initRegimeDashboard();
+            }
+        }
+    </script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="regime.js"></script>
+<footer style="text-align:center;padding:18px 0 12px;border-top:1px solid rgba(255,255,255,0.08);margin-top:40px;color:#888;font-size:0.82rem;letter-spacing:0.3px;">
+    &copy; 2025&ndash;2026 <strong style="color:#c9d1d9;">Zaid Annigeri</strong> &nbsp;|&nbsp; Quant Research Daily (QRD) &nbsp;|&nbsp;
+    <a href="https://github.com/zaid282802/Quant-Research-Daily--News-Aggregator" target="_blank" style="color:#58a6ff;text-decoration:none;">GitHub</a>
+</footer>
+</body>
+</html>

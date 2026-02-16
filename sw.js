@@ -11,7 +11,7 @@
  */
 
 const CACHE_NAME = 'qrd-cache-v1';
-const STATIC_CACHE = 'qrd-static-v2';
+const STATIC_CACHE = 'qrd-static-v4';
 const DATA_CACHE = 'qrd-data-v1';
 
 // Static assets to cache
@@ -25,7 +25,10 @@ const STATIC_ASSETS = [
     './papers.html',
     './correlations.html',
     './cot.html',
+    './regime.html',
+    './flows.html',
     './styles.css',
+    './sources-config.js',
     './app.js',
     './volatility.js',
     './factors.js',
@@ -35,6 +38,8 @@ const STATIC_ASSETS = [
     './papers.js',
     './correlations.js',
     './cot.js',
+    './regime.js',
+    './flows.js',
     './backtest-templates.js',
     'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap',
     'https://d3js.org/d3.v7.min.js'

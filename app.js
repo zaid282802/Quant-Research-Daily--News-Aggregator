@@ -25,399 +25,9 @@ const CONFIG = {
         'https://rss2json.com/api.json?rss_url='
     ],
 
-    // News Sources - RSS Feeds (Expanded)
-    SOURCES: {
-        // ==================== HIGH PRIORITY ====================
-        // WSJ RSS Feeds
-        wsj_markets: {
-            name: 'WSJ Markets',
-            url: 'https://feeds.wsj.com/wsj/xml/rss/3_7455.xml',
-            category: 'markets',
-            priority: 'high'
-        },
-        wsj_economy: {
-            name: 'WSJ Economy',
-            url: 'https://feeds.wsj.com/wsj/xml/rss/3_7014.xml',
-            category: 'macro',
-            priority: 'high'
-        },
-
-        // Federal Reserve
-        fed_press: {
-            name: 'Federal Reserve',
-            url: 'https://www.federalreserve.gov/feeds/press_all.xml',
-            category: 'central-banks',
-            priority: 'high'
-        },
-
-        // ECB
-        ecb_press: {
-            name: 'ECB',
-            url: 'https://www.ecb.europa.eu/rss/press.html',
-            category: 'central-banks',
-            priority: 'high'
-        },
-
-        // Bank of England
-        boe_news: {
-            name: 'Bank of England',
-            url: 'https://www.bankofengland.co.uk/rss/news',
-            category: 'central-banks',
-            priority: 'high'
-        },
-
-        // ==================== QUANT RESEARCH ====================
-        // Alpha Architect (Factor Research)
-        alpha_architect: {
-            name: 'Alpha Architect',
-            url: 'https://alphaarchitect.com/feed/',
-            category: 'factors',
-            priority: 'high'
-        },
-
-        // Quantocracy (Quant Blog Aggregator)
-        quantocracy: {
-            name: 'Quantocracy',
-            url: 'https://quantocracy.com/feed/',
-            category: 'systematic',
-            priority: 'high'
-        },
-
-        // SSRN Finance
-        ssrn_finance: {
-            name: 'SSRN Finance',
-            url: 'https://papers.ssrn.com/sol3/Jeljour_results.cfm?form_name=journalBrowse&journal_id=1927431&Network=no&lim=false&npage=1',
-            category: 'systematic',
-            priority: 'high'
-        },
-
-        // ==================== MEDIUM PRIORITY ====================
-        // Reuters RSS Feeds
-        reuters_business: {
-            name: 'Reuters Business',
-            url: 'https://feeds.reuters.com/reuters/businessNews',
-            category: 'markets',
-            priority: 'medium'
-        },
-        reuters_markets: {
-            name: 'Reuters Markets',
-            url: 'https://feeds.reuters.com/reuters/companyNews',
-            category: 'markets',
-            priority: 'medium'
-        },
-
-        // Financial Times (Alphaville)
-        ft_markets: {
-            name: 'FT Markets',
-            url: 'https://www.ft.com/markets?format=rss',
-            category: 'markets',
-            priority: 'medium'
-        },
-
-        // Bloomberg (via Google News)
-        bloomberg_markets: {
-            name: 'Bloomberg',
-            url: 'https://news.google.com/rss/search?q=site:bloomberg.com+markets&hl=en-US&gl=US&ceid=US:en',
-            category: 'markets',
-            priority: 'medium'
-        },
-
-        // Yahoo Finance
-        yahoo_finance: {
-            name: 'Yahoo Finance',
-            url: 'https://finance.yahoo.com/rss/topstories',
-            category: 'markets',
-            priority: 'medium'
-        },
-
-        // CNBC
-        cnbc_markets: {
-            name: 'CNBC Markets',
-            url: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258',
-            category: 'markets',
-            priority: 'medium'
-        },
-
-        // MarketWatch
-        marketwatch: {
-            name: 'MarketWatch',
-            url: 'https://feeds.marketwatch.com/marketwatch/topstories/',
-            category: 'markets',
-            priority: 'medium'
-        },
-
-        // Investing.com
-        investing_news: {
-            name: 'Investing.com',
-            url: 'https://www.investing.com/rss/news.rss',
-            category: 'markets',
-            priority: 'medium'
-        },
-
-        // ==================== DERIVATIVES & VOL ====================
-        // CBOE Insights
-        cboe_insights: {
-            name: 'CBOE',
-            url: 'https://news.google.com/rss/search?q=site:cboe.com+vix+volatility&hl=en-US&gl=US&ceid=US:en',
-            category: 'volatility',
-            priority: 'high'
-        },
-
-        // Risk.net (via Google)
-        risk_net: {
-            name: 'Risk.net',
-            url: 'https://news.google.com/rss/search?q=site:risk.net+derivatives&hl=en-US&gl=US&ceid=US:en',
-            category: 'volatility',
-            priority: 'medium'
-        },
-
-        // ==================== COMMODITIES & FX ====================
-        // Oil Price
-        oilprice: {
-            name: 'OilPrice',
-            url: 'https://oilprice.com/rss/main',
-            category: 'commodities',
-            priority: 'medium'
-        },
-
-        // Kitco (Gold/Metals)
-        kitco_news: {
-            name: 'Kitco',
-            url: 'https://news.google.com/rss/search?q=site:kitco.com+gold&hl=en-US&gl=US&ceid=US:en',
-            category: 'commodities',
-            priority: 'low'
-        },
-
-        // ==================== FIXED INCOME ====================
-        // Bond Buyer
-        bond_buyer: {
-            name: 'Bond Buyer',
-            url: 'https://news.google.com/rss/search?q=treasury+yields+bonds&hl=en-US&gl=US&ceid=US:en',
-            category: 'fixed-income',
-            priority: 'medium'
-        },
-
-        // ==================== HEDGE FUNDS ====================
-        // Institutional Investor
-        institutional_investor: {
-            name: 'Institutional Investor',
-            url: 'https://news.google.com/rss/search?q=site:institutionalinvestor.com+hedge+fund&hl=en-US&gl=US&ceid=US:en',
-            category: 'systematic',
-            priority: 'medium'
-        },
-
-        // Hedge Fund specific news
-        hedge_fund_news: {
-            name: 'Hedge Fund News',
-            url: 'https://news.google.com/rss/search?q=renaissance+technologies+OR+citadel+OR+two+sigma+OR+aqr+hedge+fund&hl=en-US&gl=US&ceid=US:en',
-            category: 'systematic',
-            priority: 'high'
-        },
-
-        // ==================== LOW PRIORITY ====================
-        // Seeking Alpha
-        seeking_alpha: {
-            name: 'Seeking Alpha',
-            url: 'https://seekingalpha.com/market_currents.xml',
-            category: 'markets',
-            priority: 'low'
-        },
-
-        // Zerohedge (contrarian)
-        zerohedge: {
-            name: 'ZeroHedge',
-            url: 'https://feeds.feedburner.com/zerohedge/feed',
-            category: 'markets',
-            priority: 'low'
-        },
-
-        // ==================== TIER 1: ALPHA-GENERATING RESEARCH ====================
-        arxiv_qfin: {
-            name: 'arXiv q-fin',
-            url: 'https://rss.arxiv.org/rss/q-fin',
-            category: 'academic',
-            priority: 'critical'
-        },
-        aqr_insights: {
-            name: 'AQR Insights',
-            url: 'https://www.aqr.com/Insights/Research/feed',
-            category: 'factors',
-            priority: 'critical'
-        },
-        quantpedia: {
-            name: 'Quantpedia',
-            url: 'https://quantpedia.com/feed/',
-            category: 'systematic',
-            priority: 'critical'
-        },
-        two_sigma: {
-            name: 'Two Sigma',
-            url: 'https://www.twosigma.com/insights/feed/',
-            category: 'systematic',
-            priority: 'critical'
-        },
-
-        // ==================== TIER 2: MARKET-MOVING INTELLIGENCE ====================
-        ny_fed_liberty: {
-            name: 'NY Fed Liberty Street',
-            url: 'https://libertystreeteconomics.newyorkfed.org/feed/',
-            category: 'macro',
-            priority: 'high'
-        },
-        stlouis_fed: {
-            name: 'St. Louis Fed Blog',
-            url: 'https://fredblog.stlouisfed.org/feed/',
-            category: 'macro',
-            priority: 'high'
-        },
-        bis_research: {
-            name: 'BIS',
-            url: 'https://www.bis.org/doclist/bis_fsi_publs.rss',
-            category: 'macro',
-            priority: 'high'
-        },
-        imf_blog: {
-            name: 'IMF Blog',
-            url: 'https://www.imf.org/en/Blogs/rss',
-            category: 'macro',
-            priority: 'high'
-        },
-
-        // ==================== TIER 3: PRACTITIONER INSIGHTS ====================
-        wilmott: {
-            name: 'Wilmott',
-            url: 'https://wilmott.com/feed/',
-            category: 'academic',
-            priority: 'medium'
-        },
-        epsilon_theory: {
-            name: 'Epsilon Theory',
-            url: 'https://www.epsilontheory.com/feed/',
-            category: 'macro',
-            priority: 'medium'
-        },
-        nber_papers: {
-            name: 'NBER',
-            url: 'https://www.nber.org/rss/new.xml',
-            category: 'academic',
-            priority: 'medium'
-        },
-        macrosynergy: {
-            name: 'Macrosynergy',
-            url: 'https://macrosynergy.com/feed/',
-            category: 'macro',
-            priority: 'medium'
-        },
-        quantstreet: {
-            name: 'QuantStreet Capital',
-            url: 'https://quantstreetcapital.com/feed/',
-            category: 'systematic',
-            priority: 'medium'
-        },
-        ibkr_quant: {
-            name: 'IBKR Quant',
-            url: 'https://www.interactivebrokers.com/campus/ibkr-quant-news/feed/',
-            category: 'systematic',
-            priority: 'medium'
-        },
-        eia_energy: {
-            name: 'EIA Energy',
-            url: 'https://www.eia.gov/rss/todayinenergy.xml',
-            category: 'energy',
-            priority: 'medium'
-        },
-        calculated_risk: {
-            name: 'Calculated Risk',
-            url: 'https://www.calculatedriskblog.com/feeds/posts/default',
-            category: 'macro',
-            priority: 'low'
-        },
-        cme_research: {
-            name: 'CME Group',
-            url: 'https://www.cmegroup.com/rss/',
-            category: 'commodities',
-            priority: 'low'
-        },
-        man_institute: {
-            name: 'Man Institute',
-            url: 'https://www.man.com/insights/feed',
-            category: 'systematic',
-            priority: 'critical'
-        }
-    },
-
-    // Category keywords for auto-classification (Enhanced)
-    CATEGORIES: {
-        'volatility': [
-            'vix', 'volatility', 'options', 'derivatives', 'gamma', 'delta',
-            'implied vol', 'variance swap', 'straddle', 'strangle', 'skew',
-            'vol surface', 'term structure', 'cboe', 'puts', 'calls',
-            'vega', 'theta', 'greeks', 'black-scholes', 'ivol', 'rvol',
-            'volatility smile', 'vol-of-vol', 'vvix', 'dispersion',
-            'correlation', 'tail risk', 'crash protection', 'hedging'
-        ],
-        'central-banks': [
-            'federal reserve', 'fed', 'fomc', 'powell', 'ecb', 'lagarde',
-            'bank of japan', 'boj', 'bank of england', 'boe', 'pboc',
-            'interest rate', 'rate hike', 'rate cut', 'monetary policy',
-            'quantitative easing', 'qe', 'qt', 'taper', 'dot plot',
-            'hawkish', 'dovish', 'inflation target', 'balance sheet',
-            'overnight rate', 'fed funds', 'discount rate', 'repo'
-        ],
-        'systematic': [
-            'hedge fund', 'quant', 'algorithmic', 'systematic', 'hft',
-            'high frequency', 'renaissance', 'citadel', 'two sigma', 'de shaw',
-            'aqr', 'bridgewater', 'winton', 'stat arb', 'market making',
-            'alpha', 'sharpe', 'drawdown', 'backtesting', 'overfitting',
-            'machine learning', 'deep learning', 'neural network', 'nlp',
-            'alternative data', 'satellite', 'sentiment analysis',
-            'execution', 'slippage', 'market impact', 'transaction cost'
-        ],
-        'factors': [
-            'factor', 'momentum', 'value investing', 'quality', 'size',
-            'low volatility', 'growth vs value', 'factor rotation',
-            'fama french', 'anomaly', 'premium', 'crowding',
-            'smart beta', 'risk parity', 'carry', 'defensive',
-            'profitability', 'investment', 'book-to-market', 'earnings yield',
-            'price momentum', 'earnings momentum', 'reversal'
-        ],
-        'fixed-income': [
-            'treasury', 'bond', 'yield curve', 'credit spread', 'corporate bond',
-            'high yield', 'investment grade', 'duration', 'coupon', 'tips',
-            '10-year', '2-year', 'inverted', 'steepening', 'flattening',
-            'convexity', 'mbs', 'abs', 'clo', 'cds', 'credit default',
-            'sovereign debt', 'gilt', 'bund', 'jgb', 'auction',
-            'term premium', 'breakeven inflation', 'real yield'
-        ],
-        'macro': [
-            'gdp', 'inflation', 'cpi', 'pce', 'employment', 'nonfarm',
-            'payroll', 'unemployment', 'retail sales', 'pmi', 'ism',
-            'consumer confidence', 'housing', 'recession', 'economic data',
-            'leading indicator', 'nowcast', 'gdp growth', 'productivity',
-            'wage growth', 'labor market', 'business cycle', 'fiscal policy',
-            'deficit', 'debt ceiling', 'stimulus', 'economic outlook'
-        ],
-        'commodities': [
-            'oil', 'crude', 'wti', 'brent', 'natural gas', 'gold', 'silver',
-            'copper', 'commodity', 'opec', 'fx', 'forex', 'dollar', 'euro',
-            'yen', 'currency', 'dxy', 'carry trade', 'lng', 'metals',
-            'agriculture', 'wheat', 'corn', 'soybeans', 'platinum',
-            'palladium', 'iron ore', 'aluminum', 'energy', 'futures'
-        ],
-        'academic': [
-            'paper', 'working paper', 'preprint', 'arxiv', 'ssrn', 'nber',
-            'journal', 'peer review', 'empirical', 'theoretical', 'econometric',
-            'methodology', 'model', 'estimation', 'calibration', 'simulation',
-            'stochastic', 'martingale', 'ito', 'diffusion', 'pricing model',
-            'microstructure', 'market design', 'optimal execution', 'order book'
-        ],
-        'energy': [
-            'natural gas', 'lng', 'pipeline', 'eia', 'opec+', 'shale',
-            'renewable', 'solar', 'wind power', 'nuclear', 'electricity',
-            'power grid', 'carbon', 'emissions', 'refinery', 'gasoline',
-            'heating oil', 'energy transition', 'baseload', 'peak demand'
-        ]
-    },
+    // Sources and categories are in sources-config.js
+    get SOURCES() { return SOURCE_CONFIG; },
+    get CATEGORIES() { return CATEGORY_CONFIG; },
 
     // Storage keys
     STORAGE: {
@@ -471,8 +81,9 @@ function tagClaim(title, content, sourceKey) {
     const tags = [];
 
     // Check institutional sources first (always tagged)
-    const institutionalSources = ['fed_press', 'ecb_press', 'boe_news', 'ny_fed_liberty',
-        'stlouis_fed', 'bis_research', 'imf_blog'];
+    const institutionalSources = ['fed_press', 'fed_speeches', 'fed_feds_papers', 'ecb_press',
+        'boe_news', 'boj_news', 'rba_news', 'boc_news', 'ny_fed_liberty',
+        'stlouis_fed', 'bis_research', 'imf_blog', 'ny_fed_markets'];
     if (institutionalSources.includes(sourceKey)) {
         tags.push('institutional');
     }
@@ -504,6 +115,7 @@ let state = {
     currentCategory: 'all',
     currentSource: 'all',
     currentTimeFilter: 'today',
+    currentSubFilter: 'all',
     isLoading: false,
     lastUpdated: null,
     marketData: null,
@@ -582,7 +194,7 @@ function calculatePriority(item, sourceConfig) {
     else priority += 1;
 
     // Category priority for quants
-    const highPriorityCategories = ['volatility', 'central-banks', 'systematic', 'factors', 'academic'];
+    const highPriorityCategories = ['volatility', 'central-banks', 'systematic', 'factors', 'academic', 'microstructure', 'positioning', 'ml-quant'];
     if (highPriorityCategories.includes(item.category)) priority += 2;
 
     // Recency bonus
@@ -1369,6 +981,66 @@ const CATEGORY_INFO = {
             'OPEC+ decisions: Medium-term supply dynamics',
             'Seasonal patterns: Natural gas, heating oil'
         ]
+    },
+    'alt-data': {
+        name: 'Alt Data & Sentiment',
+        icon: '🛰️',
+        description: 'Alternative data sources: satellite imagery, sentiment, web scraping, SEC filings',
+        keyMetrics: ['Sentiment Scores', 'Insider Filings', 'Web Traffic', 'App Downloads'],
+        whyItMatters: 'Alternative data provides information edge before it shows up in traditional indicators',
+        tradingImplications: [
+            'Sentiment extremes: Contrarian signals',
+            'Insider buying: Conviction indicator',
+            'Alt data decay: Act fast on new signals'
+        ]
+    },
+    'microstructure': {
+        name: 'Microstructure & Liquidity',
+        icon: '🔬',
+        description: 'Market microstructure, liquidity conditions, financial stress indicators',
+        keyMetrics: ['NFCI', 'OFR FSI', 'Repo Rates', 'Bid-Ask Spreads'],
+        whyItMatters: 'Liquidity conditions determine execution quality and can foreshadow market stress',
+        tradingImplications: [
+            'Stress index rising: Reduce position sizes',
+            'Liquidity drought: Wider spreads, higher impact',
+            'Repo spikes: Funding market stress signal'
+        ]
+    },
+    'positioning': {
+        name: 'Positioning & Flows',
+        icon: '📊',
+        description: 'COT positioning, fund flows, sentiment surveys, and options positioning data',
+        keyMetrics: ['COT Net Spec', 'AAII Bull/Bear', 'Put/Call Ratio', 'Fund Flows'],
+        whyItMatters: 'Extreme positioning creates mean-reversion opportunities and crowding risk',
+        tradingImplications: [
+            'Extreme COT: Contrarian signal with timing lag',
+            'Fund outflows: Forced selling, potential opportunity',
+            'Sentiment extremes: Fade the crowd'
+        ]
+    },
+    'crypto': {
+        name: 'Crypto & Digital Assets',
+        icon: '₿',
+        description: 'Bitcoin, Ethereum, DeFi, on-chain metrics, and crypto derivatives',
+        keyMetrics: ['BTC Price', 'ETH Price', 'BTC Dominance', 'On-Chain Activity'],
+        whyItMatters: 'Crypto is a risk-appetite barometer and emerging asset class for quant strategies',
+        tradingImplications: [
+            'BTC correlation with tech: Risk proxy',
+            'On-chain metrics: Supply/demand dynamics',
+            'Crypto vol: Options premium opportunities'
+        ]
+    },
+    'ml-quant': {
+        name: 'ML/AI & Quant Research',
+        icon: '🧠',
+        description: 'Machine learning, AI breakthroughs, and their applications to quantitative finance',
+        keyMetrics: ['arXiv Papers', 'Model Benchmarks', 'AI Funding', 'Patent Filings'],
+        whyItMatters: 'ML/AI advances create new alpha sources and disrupt existing quant strategies',
+        tradingImplications: [
+            'New architectures: Potential alpha in early adoption',
+            'NLP advances: Improved text signal extraction',
+            'AI regulation: Impact on automated trading'
+        ]
     }
 };
 
@@ -1466,6 +1138,11 @@ function hideCategoryTooltip() {
 // =====================================================
 
 async function fetchRSSFeed(sourceKey, sourceConfig) {
+    // Check backoff state
+    if (typeof isSourceInBackoff === 'function' && isSourceInBackoff(sourceKey)) {
+        return [];
+    }
+
     const url = `${CONFIG.RSS_API}${encodeURIComponent(sourceConfig.url)}`;
 
     try {
@@ -1477,6 +1154,9 @@ async function fetchRSSFeed(sourceKey, sourceConfig) {
         if (data.status !== 'ok') {
             throw new Error(data.message || 'RSS fetch failed');
         }
+
+        // Record success
+        if (typeof recordSourceSuccess === 'function') recordSourceSuccess(sourceKey);
 
         return data.items.map(item => ({
             id: `${sourceKey}_${item.guid || item.link}`,
@@ -1491,6 +1171,34 @@ async function fetchRSSFeed(sourceKey, sourceConfig) {
             claimTags: tagClaim(item.title, item.description || '', sourceKey)
         }));
     } catch (error) {
+        // Try allorigins.win fallback
+        try {
+            const fallbackUrl = `${typeof CORS_FALLBACK_PROXY !== 'undefined' ? CORS_FALLBACK_PROXY : 'https://api.allorigins.win/raw?url='}${encodeURIComponent(`${CONFIG.RSS_API}${encodeURIComponent(sourceConfig.url)}`)}`;
+            const fbResponse = await fetch(fallbackUrl);
+            if (fbResponse.ok) {
+                const data = await fbResponse.json();
+                if (data.status === 'ok') {
+                    if (typeof recordSourceSuccess === 'function') recordSourceSuccess(sourceKey);
+                    return data.items.map(item => ({
+                        id: `${sourceKey}_${item.guid || item.link}`,
+                        title: stripHtml(item.title),
+                        link: item.link,
+                        pubDate: item.pubDate,
+                        excerpt: truncateText(stripHtml(item.description || item.content || ''), 200),
+                        source: sourceConfig.name,
+                        sourceKey: sourceKey,
+                        category: classifyCategory(item.title, item.description || ''),
+                        fetchedAt: new Date().toISOString(),
+                        claimTags: tagClaim(item.title, item.description || '', sourceKey)
+                    }));
+                }
+            }
+        } catch (fbError) {
+            // Fallback also failed
+        }
+
+        // Record error for backoff tracking
+        if (typeof recordSourceError === 'function') recordSourceError(sourceKey);
         console.warn(`Failed to fetch ${sourceConfig.name}:`, error.message);
         return [];
     }
@@ -1510,25 +1218,31 @@ async function fetchAllNews() {
     archiveCurrentNews();
 
     const allNews = [];
-    const fetchPromises = [];
+    const fastPromises = [];
+    const slowPromises = [];
 
-    // Fetch from all sources in parallel
+    // Split sources by tier for staggered fetching
     for (const [key, config] of Object.entries(CONFIG.SOURCES)) {
-        fetchPromises.push(
-            fetchRSSFeed(key, config).then(items => {
-                items.forEach(item => {
-                    item.priority = calculatePriority(item, config);
-                    allNews.push(item);
-                });
-            })
-        );
+        const promise = fetchRSSFeed(key, config).then(items => {
+            items.forEach(item => {
+                item.priority = calculatePriority(item, config);
+                allNews.push(item);
+            });
+        });
+
+        if (config.tier === 'fast' || config.priority === 'critical' || config.priority === 'high') {
+            fastPromises.push(promise);
+        } else {
+            slowPromises.push(promise);
+        }
     }
 
-    // Fetch market data in parallel
-    fetchPromises.push(fetchMarketData());
+    // Fetch market data with fast tier
+    fastPromises.push(fetchMarketData());
 
-    // Wait for all fetches to complete
-    await Promise.allSettled(fetchPromises);
+    // Fetch fast tier first, then slow tier with slight delay
+    await Promise.allSettled(fastPromises);
+    await Promise.allSettled(slowPromises);
 
     // Remove duplicates based on title similarity
     const uniqueNews = removeDuplicates(allNews);
@@ -1560,6 +1274,9 @@ async function fetchAllNews() {
     updateLoadingState(false);
 
     showToast(`Loaded ${uniqueNews.length} articles from ${Object.keys(CONFIG.SOURCES).length} sources`);
+
+    // Check for smart alerts after data refresh
+    checkForAlerts();
 }
 
 function removeDuplicates(news) {
@@ -1648,6 +1365,20 @@ function applyFilters() {
     // Category filter
     if (state.currentCategory !== 'all') {
         filtered = filtered.filter(item => item.category === state.currentCategory);
+    }
+
+    // Sub-filter (keyword matching within category)
+    if (state.currentSubFilter !== 'all' && state.currentCategory !== 'all' && typeof SUB_FILTER_CONFIG !== 'undefined') {
+        const subFilters = SUB_FILTER_CONFIG[state.currentCategory];
+        if (subFilters) {
+            const activeFilter = subFilters.find(sf => sf.id === state.currentSubFilter);
+            if (activeFilter) {
+                filtered = filtered.filter(item => {
+                    const text = `${item.title} ${item.excerpt || ''}`.toLowerCase();
+                    return activeFilter.keywords.some(kw => text.includes(kw.toLowerCase()));
+                });
+            }
+        }
     }
 
     // Source filter
@@ -1802,6 +1533,20 @@ function updateSidebarWidgets() {
     updateVolatilityWidget();
     updateCentralBankWidget();
     updateResearchIdeasWidget();
+    updateCryptoPulseWidget();
+    updateAlertFeedWidget();
+    // Lazy-init regime & positioning widgets
+    if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(() => {
+            if (typeof renderRegimeWidget === 'function') renderRegimeWidget();
+            if (typeof renderTopExtremes === 'function') renderTopExtremes();
+        });
+    } else {
+        setTimeout(() => {
+            if (typeof renderRegimeWidget === 'function') renderRegimeWidget();
+            if (typeof renderTopExtremes === 'function') renderTopExtremes();
+        }, 1000);
+    }
 }
 
 function updateEconomicCalendar() {
@@ -2078,6 +1823,149 @@ function updateMarketBar() {
 }
 
 // =====================================================
+// Crypto Pulse Widget
+// =====================================================
+
+function updateCryptoPulseWidget() {
+    const container = document.getElementById('cryptoPulseWidget');
+    if (!container) return;
+
+    if (!state.marketData) {
+        container.innerHTML = '<div class="empty-ideas"><p>Loading crypto data...</p></div>';
+        return;
+    }
+
+    const btc = state.marketData.find(d => d.label === 'Bitcoin');
+    const eth = state.marketData.find(d => d.symbol === 'ETH-USD');
+
+    if (!btc && !eth) {
+        // Use BTC from market data if available
+        const btcAlt = state.marketData.find(d => d.label === 'Bitcoin' || (d.symbol && d.symbol.includes('BTC')));
+        if (!btcAlt) {
+            container.innerHTML = '<div class="empty-ideas"><p>No crypto data available</p></div>';
+            return;
+        }
+    }
+
+    const items = [];
+    if (btc) {
+        items.push(`<div class="cb-item"><div><div class="cb-name">BTC</div><div class="cb-next">Bitcoin</div></div><div style="text-align:right;"><span class="cb-rate">$${btc.value}</span><span class="market-change ${btc.positive ? 'positive' : 'negative'}" style="margin-left:6px;">${btc.change}</span></div></div>`);
+    }
+    if (eth) {
+        items.push(`<div class="cb-item"><div><div class="cb-name">ETH</div><div class="cb-next">Ethereum</div></div><div style="text-align:right;"><span class="cb-rate">$${eth.value}</span><span class="market-change ${eth.positive ? 'positive' : 'negative'}" style="margin-left:6px;">${eth.change}</span></div></div>`);
+    }
+
+    if (items.length === 0) {
+        container.innerHTML = '<div class="empty-ideas"><p>Crypto data loading...</p></div>';
+        return;
+    }
+
+    container.innerHTML = items.join('');
+}
+
+// =====================================================
+// Smart Alert System
+// =====================================================
+
+const ALERT_STORAGE_KEY = 'qrd_smart_alerts';
+
+function getAlerts() {
+    try {
+        return JSON.parse(localStorage.getItem(ALERT_STORAGE_KEY)) || [];
+    } catch { return []; }
+}
+
+function addAlert(type, message, category) {
+    const alerts = getAlerts();
+    const alert = {
+        id: Date.now(),
+        type,
+        message,
+        category,
+        timestamp: new Date().toISOString(),
+        dismissed: false
+    };
+    alerts.unshift(alert);
+    // Keep max 20 alerts
+    const trimmed = alerts.slice(0, 20);
+    localStorage.setItem(ALERT_STORAGE_KEY, JSON.stringify(trimmed));
+    updateAlertFeedWidget();
+    return alert;
+}
+
+function dismissAlert(alertId) {
+    const alerts = getAlerts();
+    const idx = alerts.findIndex(a => a.id === alertId);
+    if (idx !== -1) {
+        alerts[idx].dismissed = true;
+        localStorage.setItem(ALERT_STORAGE_KEY, JSON.stringify(alerts));
+        updateAlertFeedWidget();
+    }
+}
+
+function checkForAlerts() {
+    if (!state.marketData) return;
+
+    // VIX spike alert
+    const vix = state.marketData.find(d => d.label === 'VIX');
+    if (vix) {
+        const vixVal = parseFloat(vix.value);
+        if (vixVal > 25) {
+            const existing = getAlerts().find(a => a.type === 'vix-spike' && !a.dismissed && (Date.now() - new Date(a.timestamp).getTime()) < 3600000);
+            if (!existing) {
+                addAlert('vix-spike', `VIX at ${vix.value} - elevated fear`, 'volatility');
+            }
+        }
+    }
+
+    // Correlation regime shift
+    try {
+        const corrAlerts = JSON.parse(localStorage.getItem('qrd_corr_alerts') || '[]');
+        if (corrAlerts.length > 0) {
+            const existing = getAlerts().find(a => a.type === 'corr-shift' && !a.dismissed && (Date.now() - new Date(a.timestamp).getTime()) < 3600000);
+            if (!existing) {
+                addAlert('corr-shift', corrAlerts[0].message || 'Correlation regime shift detected', 'systematic');
+            }
+        }
+    } catch {}
+}
+
+function updateAlertFeedWidget() {
+    const container = document.getElementById('alertFeedWidget');
+    const badge = document.getElementById('alertBadge');
+    if (!container) return;
+
+    const alerts = getAlerts().filter(a => !a.dismissed);
+
+    if (badge) {
+        if (alerts.length > 0) {
+            badge.textContent = alerts.length;
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    if (alerts.length === 0) {
+        container.innerHTML = '<div class="empty-ideas"><p>No active alerts</p></div>';
+        return;
+    }
+
+    container.innerHTML = alerts.slice(0, 5).map(alert => `
+        <div class="alert-feed-item">
+            <div class="alert-feed-content">
+                <span class="alert-feed-type ${alert.type}">${alert.type.replace('-', ' ')}</span>
+                <span class="alert-feed-msg">${escapeHtml(alert.message)}</span>
+                <span class="alert-feed-time">${formatTime(alert.timestamp)}</span>
+            </div>
+            <button class="alert-dismiss" onclick="event.stopPropagation(); dismissAlert(${alert.id})" title="Dismiss">&times;</button>
+        </div>
+    `).join('');
+}
+
+window.dismissAlert = dismissAlert;
+
+// =====================================================
 // Hero Breaking News Section
 // =====================================================
 
@@ -2204,7 +2092,11 @@ const HOT_NEWS_CONFIG = {
         'emergency', 'crash', 'plunge', 'circuit breaker', 'flash crash',
         'inflation surprise', 'cpi surprise', 'jobs report', 'nfp',
         'bank failure', 'credit crunch', 'liquidity crisis',
-        'geopolitical', 'war', 'sanctions', 'tariff'
+        'geopolitical', 'war', 'sanctions', 'tariff',
+        'bitcoin crash', 'crypto crash', 'stablecoin depeg', 'exchange hack',
+        'ai breakthrough', 'gpt-5', 'regulation ai',
+        'extreme positioning', 'record short', 'record long', 'margin call',
+        'liquidity freeze', 'repo spike', 'financial stress'
     ],
     refreshInterval: 60000 // 1 minute
 };
@@ -2287,6 +2179,69 @@ function filterHotNews(category) {
 }
 
 // =====================================================
+// Sub-Filters
+// =====================================================
+
+function renderSubFilters(category) {
+    const container = document.getElementById('subFilters');
+    const pillsContainer = document.getElementById('subFilterPills');
+    if (!container || !pillsContainer) return;
+
+    // Reset sub-filter state
+    state.currentSubFilter = 'all';
+
+    // Check if this category has sub-filters defined
+    if (typeof SUB_FILTER_CONFIG === 'undefined' || !SUB_FILTER_CONFIG[category]) {
+        container.style.display = 'none';
+        return;
+    }
+
+    const subFilters = SUB_FILTER_CONFIG[category];
+    container.style.display = 'block';
+
+    pillsContainer.innerHTML = `
+        <button class="subfilter-pill active" data-subfilter="all">All</button>
+        ${subFilters.map(sf => `<button class="subfilter-pill" data-subfilter="${sf.id}">${sf.label}</button>`).join('')}
+    `;
+
+    // Bind click handlers
+    pillsContainer.querySelectorAll('.subfilter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            pillsContainer.querySelectorAll('.subfilter-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            state.currentSubFilter = pill.dataset.subfilter;
+            applyFilters();
+        });
+    });
+}
+
+function updateNavScrollIndicators() {
+    const wrapper = document.querySelector('.category-nav-wrapper');
+    const nav = document.querySelector('.category-nav');
+    if (!wrapper || !nav) return;
+
+    const updateClasses = () => {
+        const scrollLeft = nav.scrollLeft;
+        const maxScroll = nav.scrollWidth - nav.clientWidth;
+
+        wrapper.classList.remove('scroll-start', 'scroll-middle', 'scroll-end');
+        if (maxScroll <= 0) {
+            // No overflow
+        } else if (scrollLeft <= 5) {
+            wrapper.classList.add('scroll-start');
+        } else if (scrollLeft >= maxScroll - 5) {
+            wrapper.classList.add('scroll-end');
+        } else {
+            wrapper.classList.add('scroll-middle');
+        }
+    };
+
+    nav.addEventListener('scroll', updateClasses);
+    window.addEventListener('resize', updateClasses);
+    updateClasses();
+}
+
+// =====================================================
 // Event Handlers
 // =====================================================
 
@@ -2297,9 +2252,13 @@ function setupEventListeners() {
             document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
             e.target.classList.add('active');
             state.currentCategory = e.target.dataset.category;
+            renderSubFilters(state.currentCategory);
             applyFilters();
         });
     });
+
+    // Initialize nav scroll indicators
+    updateNavScrollIndicators();
 
     // Source filter
     document.getElementById('sourceFilter').addEventListener('change', (e) => {
@@ -2331,10 +2290,26 @@ function setupEventListeners() {
         if (e.key === 'r' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') {
             fetchAllNews();
         }
-        // 1-9 for category filters
+        // 1-9 for category filters (tabs 1-9)
         if (e.key >= '1' && e.key <= '9' && document.activeElement.tagName !== 'INPUT') {
             const tabs = document.querySelectorAll('.category-tab');
             const idx = parseInt(e.key) - 1;
+            if (tabs[idx]) {
+                tabs[idx].click();
+            }
+        }
+        // 0 for 10th category tab
+        if (e.key === '0' && document.activeElement.tagName !== 'INPUT') {
+            const tabs = document.querySelectorAll('.category-tab');
+            if (tabs[9]) {
+                tabs[9].click();
+            }
+        }
+        // A/M/P/C/L for the 5 new categories (tabs 11-15)
+        const newCatMap = { 'a': 10, 'm': 11, 'p': 12, 'c': 13, 'l': 14 };
+        if (newCatMap[e.key.toLowerCase()] !== undefined && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') {
+            const tabs = document.querySelectorAll('.category-tab');
+            const idx = newCatMap[e.key.toLowerCase()];
             if (tabs[idx]) {
                 tabs[idx].click();
             }

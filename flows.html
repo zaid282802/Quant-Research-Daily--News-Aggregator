@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="author" content="Zaid Annigeri">
+    <meta name="copyright" content="Copyright 2025-2026 Zaid Annigeri. All rights reserved.">
+    <title>Flows &amp; Positioning | Quant Research Daily</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --bg-card: #1c2128;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            color-scheme: dark;
+        }
+        html, body { background: #0d1117 !important; color: #e6edf3 !important; }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* =====================================================
+           Flows & Positioning Dashboard Styles
+           ===================================================== */
+
+        /* Page Navigation */
+        .page-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--bg-tertiary) transparent;
+        }
+
+        .page-nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .page-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .page-nav::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+        }
+
+        .page-nav a {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+        }
+
+        .page-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .page-nav a.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* Flows Container */
+        .flows-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        .flows-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .flows-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .flows-title-icon {
+            width: 28px;
+            height: 28px;
+            color: var(--accent-primary);
+        }
+
+        .flows-subtitle {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Flows Section Cards */
+        .flows-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .flows-section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        /* COT Horizontal Bars */
+        .cot-bar-container {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cot-bar-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .cot-bar-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .cot-bar-value {
+            font-size: 0.8125rem;
+            font-family: var(--font-mono);
+        }
+
+        .cot-bar {
+            height: 24px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            position: relative;
+            overflow: visible;
+        }
+
+        .cot-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .cot-bar-fill.long {
+            background: linear-gradient(90deg, rgba(63,185,80,0.3), rgba(63,185,80,0.8));
+        }
+
+        .cot-bar-fill.short {
+            background: linear-gradient(90deg, rgba(248,81,73,0.8), rgba(248,81,73,0.3));
+        }
+
+        .cot-bar-center {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        .cot-bar-extreme {
+            border: 2px solid var(--accent-yellow);
+            box-shadow: 0 0 8px rgba(251,191,36,0.3);
+        }
+
+        .cot-zscore {
+            font-size: 0.6875rem;
+            font-family: var(--font-mono);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+        }
+
+        .cot-zscore.extreme {
+            background: rgba(248,81,73,0.2);
+            color: var(--accent-red);
+        }
+
+        /* Options Gauge */
+        .options-gauge-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        /* Fund Flow Grid */
+        .flow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .flow-card {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            text-align: center;
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .flow-card:hover {
+            border-color: var(--border-color);
+            transform: translateY(-1px);
+        }
+
+        .flow-card-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: var(--spacing-xs);
+            letter-spacing: 0.3px;
+        }
+
+        .flow-card-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+        }
+
+        .flow-card-change {
+            font-size: 0.75rem;
+            margin-top: var(--spacing-xs);
+            font-family: var(--font-mono);
+        }
+
+        /* Extreme Alert Banner */
+        .extreme-banner {
+            background: rgba(248,81,73,0.1);
+            border: 1px solid rgba(248,81,73,0.3);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .extreme-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            font-size: 0.8125rem;
+        }
+
+        /* Controls */
+        .controls-bar {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .controls-bar select {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            appearance: none;
+            padding-right: 32px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        .controls-bar select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .controls-bar select:hover {
+            border-color: var(--text-muted);
+        }
+
+        .controls-bar label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Production Note */
+        .flows-production-note {
+            background: rgba(210, 153, 34, 0.08);
+            border: 1px solid rgba(210, 153, 34, 0.2);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .flows-production-note svg {
+            width: 16px;
+            height: 16px;
+            color: var(--accent-yellow);
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        .flows-footer {
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .flows-footer p {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .flows-footer .disclaimer {
+            font-size: 0.6875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .flows-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .controls-bar {
+                width: 100%;
+            }
+
+            .options-gauge-container {
+                gap: var(--spacing-md);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-nav {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                gap: var(--spacing-xs);
+            }
+
+            .page-nav a {
+                font-size: 0.75rem;
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+
+            .flows-container {
+                padding: var(--spacing-md);
+            }
+
+            .flow-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body style="background:#0d1117;color:#e6edf3;">
+    <div class="app-container" style="display: block;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                        <h1 class="logo">QRD</h1>
+                        <span class="logo-text">Quant Research Daily</span>
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <span style="font-size: 0.875rem; color: var(--text-secondary);">Flows &amp; Positioning</span>
+                    <a href="index.html" class="btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back to News
+                    </a>
+                    <a href="dashboard.html" class="btn" style="background: var(--accent-purple); border-color: var(--accent-purple);">Dashboard</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Bar -->
+        <nav class="page-nav">
+            <a href="index.html">News</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="calendar.html">Calendar</a>
+            <a href="cot.html">COT</a>
+            <a href="papers.html">Papers</a>
+            <a href="correlations.html">Correlations</a>
+            <a href="regime.html">Regime</a>
+            <a href="flows.html" class="active">Flows</a>
+            <a href="research-ideas.html">Research</a>
+            <a href="archive.html">Archive</a>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="flows-container">
+            <!-- Page Header -->
+            <div class="flows-header">
+                <div>
+                    <h2 class="flows-title">
+                        <svg class="flows-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        Flows &amp; Positioning
+                    </h2>
+                    <div class="flows-subtitle">COT positioning, options sentiment, and fund flow indicators</div>
+                </div>
+                <div class="controls-bar">
+                    <div>
+                        <label for="flowsTimeframe">Timeframe</label>
+                        <select id="flowsTimeframe">
+                            <option value="4">4 Weeks</option>
+                            <option value="13">13 Weeks</option>
+                            <option value="26">26 Weeks</option>
+                            <option value="52" selected>52 Weeks</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="flowsCategory">Category</label>
+                        <select id="flowsCategory">
+                            <option value="all">All</option>
+                            <option value="equity">Equity</option>
+                            <option value="fixed-income">FI</option>
+                            <option value="commodity">Commodity</option>
+                            <option value="fx">FX</option>
+                            <option value="energy">Energy</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Production Note -->
+            <div class="flows-production-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span>Displaying simulated positioning data with realistic patterns. COT data is shared with the COT dashboard via localStorage cache. Options sentiment and fund flows are simulated proxies.</span>
+            </div>
+
+            <!-- Extreme Positioning Alerts -->
+            <div class="extreme-banner" id="extremeAlerts" style="display:none;"></div>
+
+            <!-- Section 1: COT Positioning -->
+            <section class="flows-section">
+                <h3 class="flows-section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--accent-primary);">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                    COT Net Speculative Positioning
+                </h3>
+                <div id="cotPositioning">
+                    <div style="text-align:center;padding:24px;color:var(--text-muted);">Loading positioning data...</div>
+                </div>
+            </section>
+
+            <!-- Section 2: Options Sentiment -->
+            <section class="flows-section">
+                <h3 class="flows-section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--accent-yellow);">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    Options Sentiment (Put/Call Ratio)
+                </h3>
+                <div id="optionsSentiment">
+                    <div style="text-align:center;padding:24px;color:var(--text-muted);">Loading sentiment data...</div>
+                </div>
+            </section>
+
+            <!-- Section 3: Fund Flow Proxies -->
+            <section class="flows-section">
+                <h3 class="flows-section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--accent-green);">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                        <polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                    Fund Flow Proxies
+                </h3>
+                <div id="fundFlows">
+                    <div style="text-align:center;padding:24px;color:var(--text-muted);">Loading flow indicators...</div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="flows-footer">
+            <p>Quant Research Daily - Flows &amp; Positioning Dashboard</p>
+            <p class="disclaimer">Positioning data from CFTC COT reports (simulated). Options and fund flow data are proxy estimates. Not financial advice.</p>
+        </footer>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="flows.js"></script>
+<footer style="text-align:center;padding:18px 0 12px;border-top:1px solid rgba(255,255,255,0.08);margin-top:40px;color:#888;font-size:0.82rem;letter-spacing:0.3px;">
+    &copy; 2025&ndash;2026 <strong style="color:#c9d1d9;">Zaid Annigeri</strong> &nbsp;|&nbsp; Quant Research Daily (QRD) &nbsp;|&nbsp;
+    <a href="https://github.com/zaid282802/Quant-Research-Daily--News-Aggregator" target="_blank" style="color:#58a6ff;text-decoration:none;">GitHub</a>
+</footer>
+</body>
+</html>
